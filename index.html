@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOC Dashboard · Hướng dẫn sử dụng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Trang hướng dẫn dạng "phim": màn 1200×720 (khung trình duyệt giả + SOC Dashboard mô phỏng), con trỏ tự bấm,
+   phụ đề giải thích theo từng bước, chọn chương / bước, tốc độ, nhạc nền. Số liệu minh hoạ: tên brand, OS, MD5 và số tiền đã được đổi. */
+:root{
+  --bg:#f3f5f9; --panel:#ffffff; --fg:#141a26; --muted:#5b6475; --line:#dde2ea;
+  --accent:#2563eb; --accent-ink:#1d4ed8; --accent-soft:#e8f0fe;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace; --sans:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0d121b;--panel:#161d29;--fg:#edf1f7;--muted:#9aa5b8;--line:#263042;--accent:#60a5fa;--accent-ink:#93c5fd;--accent-soft:#16233a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d121b;--panel:#161d29;--fg:#edf1f7;--muted:#9aa5b8;--line:#263042;--accent:#60a5fa;--accent-ink:#93c5fd;--accent-soft:#16233a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding:14px 16px 28px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+header .brand{display:flex;align-items:center;gap:12px}
+.mark{font-family:Inter,var(--sans);font-size:30px;font-weight:900;letter-spacing:-2px;background:linear-gradient(90deg,#4f46e5,#3b82f6,#06b6d4);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+h1{font-size:19px;margin:0;font-weight:800}
+.sub{color:var(--muted);font-size:13px;margin:0}
+button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 14px}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ctl select{font-family:inherit;font-size:14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 10px}
+#music.off{opacity:.55;text-decoration:line-through}
+#musicvol{accent-color:var(--accent)}
+.chapters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chapters button{font-size:12px;padding:5px 10px;border-radius:999px}
+.chapters button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.steps{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:-4px 0 10px}
+.steps .lbl{font-size:11px;color:var(--muted);margin-right:4px}
+.steps button{font-size:11px;padding:2px 9px;border-radius:999px;opacity:.7}
+.steps button.done{opacity:1}
+.steps button.on{background:var(--accent);color:#fff;border-color:var(--accent);opacity:1}
+.frame{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.viewport{position:relative;width:100%;aspect-ratio:1200/720;overflow:hidden;background:#050a12}
+.cap{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-top:1px solid var(--line);min-height:76px}
+.cap .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:4px 8px;white-space:nowrap;margin-top:2px}
+.cap p{margin:0;font-size:15px}
+.bar{height:4px;background:var(--line)}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:12px}
+kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:1px 5px}
+
+/* ===================== Màn mô phỏng (stage) ===================== */
+.stage{position:absolute;left:0;top:0;width:1200px;height:720px;transform-origin:0 0;overflow:hidden;
+  font-family:Inter,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.4;letter-spacing:-.01em;color:#f8fafc;
+  background:radial-gradient(circle at 15% -10%,rgba(34,197,94,.14),transparent 34%),radial-gradient(circle at 86% -8%,rgba(59,130,246,.16),transparent 32%),linear-gradient(180deg,#07111f,#050a12)}
+.chrome{position:absolute;left:0;top:0;right:0;height:46px;background:#e9ebef;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #d5d8de;z-index:30;color:#333}
+.chrome .dots i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px}
+.chrome .addr{flex:1;background:#fff;border-radius:8px;height:30px;display:flex;align-items:center;padding:0 12px;font-family:var(--mono);font-size:12px;overflow:hidden;white-space:nowrap}
+.chrome .addr .lock{color:#2a8a4a;margin-right:8px}
+.chrome .addr b{font-weight:500;color:#0b57d0}
+/* khung app */
+.rail{position:absolute;left:0;top:46px;width:200px;height:674px;background:linear-gradient(180deg,rgba(8,22,37,.98),rgba(10,27,43,.98));border-right:1px solid rgba(148,163,184,.16);padding:14px 10px;z-index:5;transition:opacity .3s}
+.rail .logo{display:flex;align-items:center;gap:8px;padding:2px 8px 14px}
+.rail .logo b{font-size:26px;font-weight:900;letter-spacing:-2px;background:linear-gradient(90deg,#4f46e5,#3b82f6,#06b6d4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rail .logo span{font-size:9.5px;font-weight:800;letter-spacing:.14em;line-height:1.15;color:#e5e7eb}
+.nav a{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:11px;color:#cbd5e1;font-size:12.5px;font-weight:600;margin-bottom:2px;border:1px solid transparent}
+.nav a svg{width:15px;height:15px;flex:none}
+.nav a.on{background:rgba(37,99,235,.18);border-color:rgba(96,165,250,.35);color:#fff}
+.rail .src{position:absolute;left:12px;right:12px;bottom:58px;font-size:10px;color:#98a2b3;line-height:1.5}
+.rail .src b{color:#e5e7eb;font-size:10px;letter-spacing:.06em}
+.rail .src i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#32d583;margin-right:4px}
+.rail .fold{position:absolute;left:12px;right:12px;bottom:14px;border:1px solid rgba(96,165,250,.6);border-radius:11px;text-align:center;padding:6px;font-size:11.5px;color:#e5e7eb}
+.app.solo .rail{opacity:0}
+.page{position:absolute;left:200px;top:46px;width:1000px;height:674px;overflow:hidden;opacity:0;transition:opacity .35s;pointer-events:none}
+.page.solo{left:0;width:1200px}
+.page.on{opacity:1}
+.page .inner{position:absolute;left:0;top:0;width:100%;padding:16px 22px 30px;transition:transform .7s cubic-bezier(.3,.7,.3,1)}
+/* thanh trên của trang */
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.top h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.top h2 .star{color:#fdb022;font-size:17px}
+.top .sb{font-size:11.5px;color:#98a2b3;margin-top:2px}
+.top .sb i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#32d583;margin-right:5px}
+.acts{display:flex;gap:7px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(148,163,184,.24);background:rgba(17,25,40,.82);color:#f8fafc;border-radius:10px;padding:6px 11px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn.pri{background:linear-gradient(135deg,#2563eb,#3b82f6);border-color:transparent}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:6px 10px;font-size:11.5px;font-weight:700}
+.chip.warn{background:rgba(247,144,9,.14);color:#fdb022}
+.chip.live{background:rgba(18,183,106,.14);color:#32d583}
+/* thanh lọc */
+.filters{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end;background:linear-gradient(180deg,rgba(20,32,52,.84),rgba(15,23,42,.72));border:1px solid rgba(148,163,184,.16);border-radius:16px;padding:8px 12px;margin-bottom:10px;position:relative}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld>small{font-size:8.5px;font-weight:800;letter-spacing:.1em;color:#98a2b3;text-transform:uppercase}
+.seg{display:inline-flex;background:rgba(148,163,184,.10);border:1px solid rgba(148,163,184,.16);border-radius:10px;padding:2px}
+.seg span{padding:4px 9px;border-radius:8px;font-size:11.5px;color:#cbd5e1;font-weight:600}
+.seg span.on{background:rgba(37,99,235,.28);color:#fff}
+.sel{border:1px solid rgba(148,163,184,.24);background:rgba(15,24,40,.9);border-radius:9px;padding:4px 9px;font-size:11.5px;font-weight:700;color:#f8fafc;white-space:nowrap}
+.filters .hint{margin-left:auto;font-size:10.5px;color:#98a2b3;font-weight:700}
+.dd{position:absolute;z-index:12;width:230px;background:#0f1828;border:1px solid rgba(148,163,184,.24);border-radius:12px;padding:8px;box-shadow:0 18px 42px rgba(0,0,0,.4);display:none}
+.dd.on{display:block}
+.dd .srch{border:1px solid rgba(148,163,184,.24);border-radius:8px;padding:5px 8px;font-size:11.5px;color:#98a2b3;margin-bottom:6px;min-height:26px}
+.dd .srch.typing{color:#f8fafc}
+.dd .opt{display:flex;align-items:center;gap:7px;padding:4px 6px;border-radius:7px;font-size:11.5px}
+.dd .opt i{width:13px;height:13px;border-radius:4px;border:1.5px solid #64748b;display:inline-block;flex:none}
+.dd .opt.on i{background:#3b82f6;border-color:#3b82f6;box-shadow:inset 0 0 0 2px #0f1828}
+.dd .msg{font-size:10.5px;color:#32d583;padding:4px 6px}
+.dd .paste{font-family:var(--mono);font-size:10px;color:#e5e7eb;white-space:pre;line-height:1.5;min-height:46px}
+/* thẻ, ô số */
+.card{background:linear-gradient(180deg,rgba(20,32,52,.84),rgba(15,23,42,.72));border:1px solid rgba(148,163,184,.16);border-radius:16px;padding:12px 14px;position:relative}
+.card h3{margin:0 0 6px;font-size:12.5px;font-weight:700;color:#e5e7eb;display:flex;gap:6px;align-items:center}
+.card h3 .no{color:#93c5fd}
+.card h3 small{margin-left:auto;font-size:9.5px;color:#98a2b3;font-weight:600;letter-spacing:.04em}
+.grid{display:grid;gap:10px}
+.big{font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.big small{font-size:14px;color:#cbd5e1;margin-left:3px;font-weight:600}
+.full{font-size:10.5px;color:#98a2b3;margin-top:2px;font-variant-numeric:tabular-nums}
+.dl{display:flex;gap:6px;align-items:center;margin-top:6px;font-size:10.5px;color:#98a2b3}
+.bd{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:999px;white-space:nowrap}
+.bd.up{color:#32d583;background:rgba(18,183,106,.14)}
+.bd.dn{color:#fb7185;background:rgba(240,68,56,.14)}
+.bd.nt{color:#cbd5e1;background:rgba(148,163,184,.14)}
+.bd.run{color:#32d583;background:rgba(18,183,106,.14)}
+.cnt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.cnt div{background:rgba(148,163,184,.10);border-radius:10px;padding:6px;text-align:center}
+.cnt b{display:block;font-size:17px}
+.cnt span{font-size:10px;color:#98a2b3}
+.meter{height:8px;border-radius:999px;background:rgba(37,99,235,.16);margin:8px 0 4px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:999px;background:#60a5fa;transition:width 1s}
+.kv{display:flex;justify-content:space-between;font-size:11px;color:#cbd5e1;margin-top:2px}
+.kv b{color:#f8fafc;font-variant-numeric:tabular-nums}
+.note{background:rgba(247,144,9,.12);border:1px solid rgba(253,176,34,.25);color:#fdb022;border-radius:10px;padding:5px 10px;font-size:10.5px;margin-bottom:6px}
+/* bảng */
+table.tb{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}
+.tb th{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:#98a2b3;font-weight:800;text-align:left;padding:6px 7px;border-bottom:1px solid rgba(148,163,184,.16);white-space:nowrap}
+.tb td{padding:6px 7px;border-bottom:1px solid rgba(148,163,184,.09);vertical-align:middle}
+.tb .r{text-align:right}
+.tb tr.sel td{background:rgba(37,99,235,.16)}
+.tb tr.grp td{background:rgba(148,163,184,.08);font-weight:700}
+.tb tr.sub td:first-child{padding-left:20px;color:#cbd5e1}
+.tb .kc{color:#cbd5e1;white-space:nowrap}
+.tb .kc b{color:#f8fafc}
+.tb .mono{font-family:var(--mono);font-size:10.5px}
+.tb .cp{color:#93c5fd;font-size:9.5px;margin-left:4px}
+.tb .muted{color:#98a2b3}
+.tb .hc{text-align:right;font-weight:700}
+/* KPI */
+.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi .scope{display:inline-block;font-size:9.5px;color:#98a2b3;background:rgba(148,163,184,.10);border-radius:999px;padding:1px 7px;margin-bottom:6px}
+.kpi .st{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.kpi .st div small{display:block;font-size:10px;color:#98a2b3}
+.kpi .st div b{display:block;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;margin:1px 0}
+.kpi .st div em{font-style:normal;font-size:9.5px;color:#98a2b3}
+/* biểu đồ */
+.bars{display:flex;align-items:flex-end;gap:6px;height:120px;border-bottom:1px solid rgba(148,163,184,.28);padding:0 4px}
+.bars .b{flex:1;display:flex;flex-direction:column-reverse;border-radius:4px 4px 0 0;overflow:hidden;transition:height .8s}
+.bars .b i{display:block;width:100%}
+.bars .b.none{background:transparent}
+.axis{display:flex;justify-content:space-between;font-size:9.5px;color:#98a2b3;margin-top:3px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;color:#cbd5e1;margin-bottom:6px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.hbar{display:grid;grid-template-columns:130px 1fr 70px;gap:8px;align-items:center;font-size:11px;margin:5px 0}
+.hbar .t{height:12px;border-radius:6px;background:rgba(148,163,184,.10);overflow:hidden}
+.hbar .t i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2563eb,#60a5fa);transition:width .9s}
+.hbar b{text-align:right;font-variant-numeric:tabular-nums}
+/* Hub */
+.hero{border:1px solid rgba(96,165,250,.22);border-radius:18px;padding:16px 20px;background:radial-gradient(circle at 83% 18%,rgba(45,212,191,.16),transparent 31%),linear-gradient(135deg,#0b1424,#0f172a 55%,#0a1f1b);margin-bottom:10px}
+.hero h4{margin:6px 0 8px;font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1.15}
+.hero h4 em{font-style:normal;color:#60a5fa}
+.hero .pill{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.1em;color:#93c5fd;border:1px solid rgba(96,165,250,.35);border-radius:999px;padding:3px 9px}
+.qg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.q{border:1px solid rgba(148,163,184,.14);border-radius:14px;padding:10px 12px;background:rgba(17,25,40,.6)}
+.q .eb{font-size:9px;font-weight:900;letter-spacing:.1em}
+.q h5{margin:3px 0 4px;font-size:13px;font-weight:800;line-height:1.25}
+.q p{margin:0 0 7px;font-size:10.5px;color:#98a2b3;line-height:1.4}
+.qc{display:inline-block;font-size:10px;font-weight:800;border-radius:999px;padding:3px 8px;margin:0 3px 3px 0}
+.defs p{display:grid;grid-template-columns:96px 1fr;gap:8px;margin:0;padding:6px 0;border-top:1px solid rgba(148,163,184,.12);font-size:11px}
+.defs p b{color:#f8fafc}
+.defs p span{color:#cbd5e1}
+.drawer{position:absolute;right:0;top:0;width:360px;height:674px;background:#0f1828;border-left:1px solid rgba(148,163,184,.2);box-shadow:-12px 0 40px rgba(0,0,0,.4);padding:18px;transform:translateX(105%);transition:transform .45s;z-index:8}
+.drawer.on{transform:none}
+.drawer h4{margin:0 0 4px;font-size:18px}
+.drawer .ditem{display:grid;grid-template-columns:96px 1fr;gap:8px;padding:7px 0;border-top:1px solid rgba(148,163,184,.14);font-size:11.5px}
+.drawer .ditem span{color:#98a2b3}
+/* in / PDF */
+.print{position:absolute;inset:46px 0 0 0;background:rgba(0,0,0,.55);display:none;z-index:25}
+.print.on{display:block}
+.print .sheet{position:absolute;left:70px;top:24px;width:520px;height:620px;background:#fff;color:#101828;border-radius:4px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.4);font-size:10px}
+.print .sheet h6{margin:0;font-size:17px}
+.print .sheet .pc{border:1px solid #e4e7ec;border-radius:10px;padding:8px;margin-top:8px}
+.print .side{position:absolute;right:70px;top:24px;width:420px;height:620px;background:#f8fafc;color:#101828;border-radius:8px;padding:20px;font-family:var(--sans);font-size:13px}
+.print .side .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e4e7ec}
+.print .side .sv{border:1px solid #c7ccd6;border-radius:6px;padding:4px 10px;background:#fff}
+.print .side .go{position:absolute;right:20px;bottom:20px;display:flex;gap:8px}
+.print .side .go span{border-radius:18px;padding:7px 18px;border:1px solid #c7ccd6}
+.print .side .go span.p{background:#0b57d0;color:#fff;border-color:#0b57d0}
+/* overview tổng quan dự án (cảnh mở / kết) */
+.ov{padding:28px 40px;color:#f8fafc}
+.ov h3{margin:0 0 4px;font-size:26px;font-weight:900;letter-spacing:-.02em}
+.ov .lead{color:#cbd5e1;font-size:14px;margin:0 0 18px;max-width:900px}
+.ovmap{display:grid;grid-template-columns:300px 60px 1fr;gap:0;align-items:stretch}
+.ovsrc{display:flex;flex-direction:column;gap:9px}
+.box{border:1px solid rgba(148,163,184,.2);border-radius:14px;padding:10px 12px;background:rgba(17,25,40,.75);opacity:.18;transform:translateY(6px);transition:opacity .5s,transform .5s}
+.box.on{opacity:1;transform:none}
+.box small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.1em;color:#93c5fd}
+.box b{display:block;font-size:14px;margin:2px 0}
+.box span{font-size:11.5px;color:#cbd5e1}
+.arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:#60a5fa;opacity:.15;transition:opacity .5s}
+.arrow.on{opacity:1}
+.ovpages{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.ovfoot{margin-top:16px;border-top:1px dashed rgba(148,163,184,.3);padding-top:12px;font-size:12.5px;color:#cbd5e1;opacity:.18;transition:opacity .5s}
+.ovfoot.on{opacity:1}
+.wf{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px}
+.wf .box{min-height:250px}
+.wf .box ol{margin:8px 0 0;padding-left:18px;font-size:12px;color:#cbd5e1}
+.wf .box ol li{margin-bottom:5px}
+/* overlay: con trỏ, gợn bấm, làm nổi, bong bóng giải thích, toast, nhãn case */
+.cursor{position:absolute;left:600px;top:360px;width:22px;height:30px;z-index:50;transition:left .6s cubic-bezier(.3,.7,.3,1),top .6s cubic-bezier(.3,.7,.3,1);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.cursor.hide{opacity:0}
+.ripple{position:absolute;width:36px;height:36px;border-radius:50%;border:3px solid #fdb022;transform:translate(-50%,-50%) scale(.3);opacity:.9;z-index:49;animation:rip .5s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:translate(-50%,-50%) scale(1.4);opacity:0}}
+.hl{box-shadow:0 0 0 2px #fdb022,0 0 0 7px rgba(253,176,34,.28)!important;border-radius:10px;transition:box-shadow .2s}
+.pressed{transform:scale(.97)}
+.bub{position:absolute;z-index:45;max-width:290px;background:#fff7e6;color:#3d2c06;border:1px solid #f5c26b;border-radius:12px;padding:9px 12px;font-family:var(--sans);font-size:12.5px;line-height:1.45;box-shadow:0 12px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .3s;pointer-events:none}
+.bub.on{opacity:1}
+.bub b{color:#7a4b00}
+.toast{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);background:#111827;color:#fff;padding:9px 16px;border-radius:9px;font-family:var(--sans);font-size:13px;z-index:46;opacity:0;transition:opacity .3s;border:1px solid rgba(148,163,184,.3)}
+.toast.on{opacity:1}
+.case{position:absolute;left:12px;bottom:12px;z-index:40;box-shadow:0 8px 20px rgba(0,0,0,.35);background:rgba(253,176,34,.95);color:#2b1d00;font-family:var(--sans);font-size:11.5px;font-weight:700;border-radius:8px;padding:5px 10px;max-width:520px;display:none}
+.case.on{display:block}
+@media (prefers-reduced-motion:reduce){.cursor{transition:none}.bar i{transition:none}.page .inner{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="mark">SOC</span><div><h1>SOC Dashboard · Hướng dẫn sử dụng</h1><p class="sub">Xem như một đoạn phim: con trỏ tự bấm, phụ đề giải thích từng bước, mỗi trang có case cụ thể (kỳ 9/2026, số liệu minh hoạ).</p></div></div>
+    <div class="ctl">
+      <button id="play" class="primary" type="button">▶ Chạy</button>
+      <button id="restart" type="button">↺ Từ đầu</button>
+      <button id="music" type="button" title="Nhạc nền không lời">♪ Nhạc: bật</button>
+      <input id="musicvol" type="range" min="0" max="1" step="0.05" value="0.4" title="Âm lượng nhạc nền" style="width:80px">
+      <label style="font-size:13px;color:var(--muted)">Tốc độ <select id="speed"><option value="0.6">0.6× (chậm)</option><option value="0.8" selected>0.8× (mặc định)</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label>
+    </div>
+  </header>
+  <div class="chapters" id="chapters"></div>
+  <div class="steps" id="steps"></div>
+  <div class="frame">
+    <div class="viewport" id="vp">
+      <div class="stage app" id="stage">
+        <div class="chrome"><span class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><div class="addr"><span class="lock">🔒</span><span id="addr">SOC Dashboard</span></div></div>
+
+        <!-- sidebar dùng chung -->
+        <aside class="rail" id="rail">
+          <div class="logo"><b>SOC</b><span>SOCIAL<br>DASHBOARD</span></div>
+          <nav class="nav" id="nav"></nav>
+          <div class="src"><b>DATA SOURCE</b><br>2. TOTAL · Dự chi Tx/yy · CFG<br>Last Sync: <b>17:33 24/10/2026</b><br><i></i>Success</div>
+          <div class="fold">« Thu gọn</div>
+        </aside>
+
+        <!-- 0 · tổng quan -->
+        <div class="page solo" id="p-intro"><div class="inner ov">
+          <h3>SOC Dashboard dùng để làm gì?</h3>
+          <p class="lead">Trang báo cáo chi phí và hiệu quả Social của team: chi bao nhiêu, cho brand / Project / campaign / MD5 / OS nào, có đúng Dự chi không, và dữ liệu nguồn đang lỗi ở đâu. Mở bằng link team; link luôn giữ nguyên qua các lần cập nhật.</p>
+          <div class="ovmap">
+            <div class="ovsrc">
+              <div class="box" id="ov-total"><small>NGUỒN CHÍNH</small><b>Tab 2. TOTAL</b><span>Mỗi dòng: Year, Month, MD5, OS, Brand, Objective, Campaign, Date, Actual Cost và các chỉ số (View, NRU, NPU30, NDEP30…).</span></div>
+              <div class="box" id="ov-plan"><small>KẾ HOẠCH</small><b>Sheet Dự chi Tx/yy</b><span>Dự chi theo tháng cho từng Project / objective / PIC — dùng cho Budget Used.</span></div>
+              <div class="box" id="ov-cfg"><small>CẤU HÌNH</small><b>CFG_BRAND · CFG_OBJECTIVE</b><span>Map brand code → brand, objective → Project và bộ KPI (Social / GA / Ingame).</span></div>
+            </div>
+            <div class="arrow" id="ov-arr">➜</div>
+            <div class="ovpages">
+              <div class="box" id="ov-g1"><small>BẮT ĐẦU</small><b>Dashboard Hub</b><span>Chọn trang theo câu hỏi, định nghĩa KPI, quy tắc đọc số, vấn đề dữ liệu cần xử lý.</span></div>
+              <div class="box" id="ov-g2"><small>TỔNG QUAN</small><b>Overview · Performance</b><span>Tháng này chi bao nhiêu, so kỳ trước / cùng kỳ, có vượt Dự chi không. Performance xem theo Month, Week hoặc Date range.</span></div>
+              <div class="box" id="ov-g3"><small>PHÂN TÍCH</small><b>By Brand · By Project · By Campaign · By MD5 · By OS</b><span>Chi và hiệu quả theo từng chiều; By Campaign tính trọn đợt để nghiệm thu.</span></div>
+              <div class="box" id="ov-g4"><small>DỮ LIỆU</small><b>Data Explorer · Data Validation</b><span>Tự xoay bảng số theo chiều bất kỳ; xem dữ liệu nguồn đang lỗi gì để sửa trên sheet.</span></div>
+            </div>
+          </div>
+          <div class="ovfoot" id="ov-foot"><b>Cách đọc chung.</b> Tên trang, khối, chỉ số, cột bằng tiếng Anh như D4; giải thích, ghi chú bằng tiếng Việt. Tiền rút gọn: <b>M</b> = triệu, <b>B</b> = tỷ — rê chuột lên số để xem đủ. ▲▼ là thay đổi so với kỳ so sánh, màu xanh = tốt, đỏ = xấu. "—" là chưa có số, không phải 0.</div>
+        </div></div>
+
+        <!-- 1 · Hub -->
+        <div class="page" id="p-hub"><div class="inner" id="in-hub">
+          <div class="top"><div><h2>Dashboard Hub <span class="star">☆</span></h2><div class="sb">Điểm bắt đầu của SOC Dashboard</div></div>
+            <div class="acts"><span class="chip warn" id="hub-issues">10 vấn đề cần xử lý →</span><span class="chip live">● Dữ liệu đến 26/10/2026</span><span class="btn">☀ Light</span><span class="btn">⤒ Export</span></div></div>
+          <div class="hero"><span class="pill">✦ SOC DECISION CENTER</span><h4>Một nguồn số liệu.<br><em>Mọi góc nhìn Social.</em></h4><span class="btn pri">Mở Overview</span> <span class="btn">Mở Data Explorer</span></div>
+          <div class="card" style="margin-bottom:10px"><h3><span class="no">01</span> Bạn cần trả lời câu hỏi nào?</h3>
+            <div class="qg">
+              <div class="q" id="hub-q1"><div class="eb" style="color:#60a5fa">THEO DÕI</div><h5>Tháng này đã chi bao nhiêu?</h5><p>Tổng chi, lũy kế năm; Performance theo tháng, tuần hoặc khoảng ngày; so với kỳ trước hoặc cùng kỳ.</p><span class="qc" style="background:rgba(96,165,250,.14);color:#93c5fd">Overview</span><span class="qc" id="hub-q1-perf" style="background:rgba(96,165,250,.14);color:#93c5fd">Performance</span></div>
+              <div class="q"><div class="eb" style="color:#a78bfa">ĐO LƯỜNG</div><h5>Chi có đúng Dự chi không?</h5><p>Tiến độ Dự chi theo Project, objective và PIC.</p><span class="qc" style="background:rgba(167,139,250,.14);color:#c4b5fd">Performance</span><span class="qc" style="background:rgba(167,139,250,.14);color:#c4b5fd">Overview</span></div>
+              <div class="q" id="hub-q3"><div class="eb" style="color:#fdb022">PHÂN TÍCH</div><h5>Brand, Project nào chi nhiều?</h5><p>Cost và hiệu quả theo Brand, Project → objective, campaign, MD5 và OS.</p><span class="qc" style="background:rgba(253,176,34,.14);color:#fdb022">By Brand</span><span class="qc" style="background:rgba(253,176,34,.14);color:#fdb022">By Project</span><span class="qc" style="background:rgba(253,176,34,.14);color:#fdb022">By Campaign</span><span class="qc" style="background:rgba(253,176,34,.14);color:#fdb022">By MD5</span><span class="qc" style="background:rgba(253,176,34,.14);color:#fdb022">By OS</span></div>
+              <div class="q"><div class="eb" style="color:#32d583">XỬ LÝ</div><h5>Dữ liệu ra sao, cần sửa gì?</h5><p>Brand chưa map, objective chưa cấu hình, số bất thường; tra số liệu gốc theo mọi chiều.</p><span class="qc" style="background:rgba(50,213,131,.14);color:#32d583">Data Validation</span><span class="qc" style="background:rgba(50,213,131,.14);color:#32d583">Data Explorer</span></div>
+            </div></div>
+          <div class="card" id="hub-defs"><h3><span class="no">02</span> Định nghĩa KPI <small>bấm một dòng để xem đủ</small></h3>
+            <div class="defs">
+              <p><b>Actual Cost</b><span>Chi phí thực chi (cột Actual Cost của 2. TOTAL), cộng theo kỳ và bộ lọc.</span></p>
+              <p><b>Planned Cost</b><span>Dự chi theo tháng, lấy từ các sheet Dự chi Tx/yy.</span></p>
+              <p><b>NRU</b><span>New Register User · user đăng ký mới.</span></p>
+              <p id="hub-def-nroas"><b>NROAS30</b><span>Deposit 30 ngày của user mới (NDEP30) trên chi phí.</span></p>
+              <p><b>CP NRU</b><span>Chi phí cho mỗi NRU = Actual Cost ÷ NRU.</span></p>
+            </div></div>
+          </div>
+          <div class="drawer" id="hub-drawer"><h4>NROAS30</h4><div style="color:#98a2b3;font-size:11.5px;margin-bottom:10px">Từ điển số liệu · Ingame</div>
+            <div class="ditem"><span>Ý nghĩa</span><b>Deposit 30 ngày của user mới (NDEP30) trên chi phí.</b></div>
+            <div class="ditem"><span>Công thức</span><b>NDEP30 ÷ Actual Cost</b></div>
+            <div class="ditem"><span>Cách tính kỳ</span><b>Σ NDEP30 ÷ Σ Actual Cost của cả kỳ và bộ lọc — không lấy trung bình các tháng.</b></div>
+            <div class="ditem"><span>Đọc thế nào</span><b>1.0 = hoà vốn deposit 30 ngày; càng cao càng tốt.</b></div></div>
+        </div>
+
+        <!-- 2,4,5,6 · Performance -->
+        <div class="page" id="p-perf"><div class="inner" id="in-perf">
+          <div class="top"><div><h2>Performance <span class="star">☆</span></h2><div class="sb"><i></i><span id="pf-sub">Dữ liệu đến 26/10/2026 · Sep 2026</span></div></div>
+            <div class="acts"><span class="btn">☀ Light</span><span class="btn pri" id="pf-refresh">⟳ Refresh</span><span class="btn" id="pf-export">⤒ Export</span></div></div>
+          <div class="filters" id="pf-filters">
+            <div class="fld"><small>Metric</small><span class="sel">Actual Cost ▾</span></div>
+            <div class="fld" id="pf-period"><small>Period</small><div style="display:flex;gap:6px;align-items:center"><span class="seg" id="pf-grain"><span id="pf-g-month">Month</span><span id="pf-g-week">Week</span><span id="pf-g-days">Date range</span></span><span class="sel" id="pf-psel">September 2026 ▾</span></div></div>
+            <div class="fld" id="pf-cmp"><small>Compare</small><span class="seg"><span class="on" id="pf-c-prev">MoM</span><span id="pf-c-ly">YoY</span></span></div>
+            <div class="fld" id="pf-brand"><small>Brand</small><span class="sel" id="pf-brand-b">All Brand ▾</span></div>
+            <div class="fld"><small>Project</small><span class="sel">All Project ▾</span></div>
+            <div class="fld"><small>Objective</small><span class="sel">All Objective ▾</span></div>
+            <div class="fld"><small>OS</small><span class="sel">All OS ▾</span></div>
+            <div class="fld" id="pf-md5"><small>MD5</small><span class="sel" id="pf-md5-b">All MD5 ▾</span></div>
+            <span class="hint" id="pf-hint">Sep 2026 vs Aug 2026</span>
+            <div class="dd" id="dd-brand" style="left:430px;top:56px"><div class="srch">Tìm brand…</div>
+              <div class="opt" id="opt-brand-a"><i></i>brand-a</div><div class="opt"><i></i>brand-b</div><div class="opt"><i></i>brand-c</div><div class="opt"><i></i>brand-d</div><div class="opt"><i></i>brand-e</div><div class="opt"><i></i>brand-f</div></div>
+            <div class="dd" id="dd-md5" style="left:700px;top:56px;width:260px"><div class="srch" id="dd-md5-s">Tìm hoặc dán nhiều MD5…</div><div class="paste" id="dd-md5-p"></div><div class="msg" id="dd-md5-m"></div></div>
+          </div>
+          <div id="pf-notes"></div>
+          <div class="grid" style="grid-template-columns:1.25fr 1fr 1fr 1.1fr 1.15fr" id="pf-tiles">
+            <div class="card" id="pf-cost"><h3 id="pf-cost-t">Actual Cost · Sep 2026</h3><div class="big" id="pf-cost-v">227.44<small>M</small></div><div class="full" id="pf-cost-f">227,435,935</div><div class="dl" id="pf-cost-d"><span class="bd dn">▼ 77.3%</span>vs Aug 2026 (1.00B)</div></div>
+            <div class="card" id="pf-avg"><h3>Avg / Day</h3><div class="big" id="pf-avg-v">7.58<small>M</small></div><div class="full">Không gồm chi phí nghiệm thu theo tháng</div></div>
+            <div class="card" id="pf-lump"><h3>Monthly Settlement</h3><div class="big">0</div><div class="full" id="pf-lump-a">Chi phí nghiệm thu theo tháng, ghi vào ngày 01</div><div class="full" id="pf-lump-b">Đã tính trong Actual Cost</div></div>
+            <div class="card" id="pf-active"><h3>Active</h3><div class="cnt"><div><b id="pf-n1">6</b><span>Brand</span></div><div><b id="pf-n2">4</b><span>Project</span></div><div><b id="pf-n3">32</b><span>MD5</span></div></div><div class="full" style="margin-top:4px">Có chi phí trong kỳ</div></div>
+            <div class="card" id="pf-budget"><h3>Budget Used</h3><div class="big" id="pf-bu" style="font-size:22px">17.8% used</div><div class="meter"><i id="pf-meter"></i></div><div id="pf-brows"><div class="kv"><span>Actual</span><b id="pf-ba">227.44M</b></div><div class="kv"><span>Budget</span><b id="pf-bb">1.28B</b></div><div class="kv"><span>Remaining</span><b id="pf-br">1.05B</b></div></div><div class="full" id="pf-bnote" style="display:none">Chỉ so với Dự chi khi xem trọn tháng</div></div>
+          </div>
+          <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:10px">
+            <div class="card" id="pf-proj"><h3><span class="no">1.</span> Cost by Project · <span id="pf-proj-p">Sep 2026</span> <small>số từ Data Explorer</small></h3>
+              <div class="hbar"><span>Bookpost telegram</span><span class="t"><i data-w="100"></i></span><b>105.21M</b></div>
+              <div class="hbar"><span>Booking KOL</span><span class="t"><i data-w="65"></i></span><b>68.80M</b></div>
+              <div class="hbar"><span>Build kênh</span><span class="t"><i data-w="45"></i></span><b>47.06M</b></div>
+              <div class="hbar"><span>Site &amp; Production</span><span class="t"><i data-w="6"></i></span><b>6.37M</b></div></div>
+            <div class="card" id="pf-blocks"><h3>Các khối bên dưới</h3>
+              <div style="font-size:11.5px;color:#cbd5e1;line-height:1.7">KPI Scorecard · Top Movers · Trend · Project × Brand · Breakdown by Time · Budget by Project · Detail Table — cuộn xuống trên trang thật. Bảng nào cũng có <b>Export CSV</b>; bấm một Project / brand để lọc cả trang.</div></div>
+          </div>
+        </div></div>
+
+        <!-- 3 · Overview -->
+        <div class="page" id="p-ovw"><div class="inner" id="in-ovw">
+          <div class="top"><div><h2>Overview - Social Performance <span class="star">☆</span></h2><div class="sb"><i></i>Dữ liệu đến 26/10/2026 · Sep 2026</div></div>
+            <div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn" id="ov-export">⤒ Export</span></div></div>
+          <div class="grid" style="grid-template-columns:1.2fr 1fr;margin-bottom:10px">
+            <div class="card" id="ov-sum"><h3>Summary · Sep 2026</h3><div class="big">227.44<small>M</small></div><div class="full">227,435,935 · Actual Cost tháng 9</div><div class="dl"><span class="bd dn">▼ 77.3%</span>vs Aug 2026 (1.00B)</div></div>
+            <div class="card" id="ov-bud"><h3>Budget vs Actual <span class="bd up" style="margin-left:auto">Under budget</span></h3><div class="meter"><i id="ov-meter"></i></div><div class="kv"><span>Actual</span><b>227.44M</b></div><div class="kv"><span>Budget</span><b>1.28B</b></div><div class="kv"><span>Used</span><b>17.8%</b></div></div>
+          </div>
+          <div class="card" id="ov-kpi"><h3><span class="no">1.</span> KPI Scorecard <small>2. TOTAL · CFG_OBJECTIVE</small></h3>
+            <div style="font-size:10.5px;color:#98a2b3;background:rgba(148,163,184,.08);border-radius:8px;padding:5px 9px;margin-bottom:8px">Mỗi khối chỉ tính trên các objective có theo dõi chỉ số đó (theo KPI family trong CFG_OBJECTIVE). ▲▼ so với kỳ so sánh đang chọn ở thanh lọc.</div>
+            <div class="kgrid">
+              <div class="card kpi" id="ov-k-social"><h3>Social</h3><span class="scope">Tỉ lệ: 2 objective · 17% cost</span><div class="st">
+                <div><small>View</small><b>2.65M</b><span class="bd dn">▼ 99.3%</span></div><div><small>CPV</small><b>15.76</b><span class="bd dn">▲ 1,064.6%</span></div>
+                <div><small>Follower (end)</small><b>297</b><span class="bd dn">▼ 100.0%</span></div><div><small>Δ Follower (vs previous)</small><b>-2,564</b><em>+296 từ MD5 mới</em></div>
+                <div><small>Engagement</small><b>56,517</b><span class="bd dn">▼ 98.8%</span></div><div><small>Engagement / View</small><b>2.4%</b><span class="bd up">▲ 0.5 pp</span></div></div></div>
+              <div class="card kpi" id="ov-k-ga"><h3>GA · Site Traffic</h3><span class="scope">Tỉ lệ: 5 objective · 80% cost</span><div class="st">
+                <div><small>New User</small><b>10,142</b><span class="bd dn">▼ 18.3%</span></div><div><small>Session</small><b>12,961</b><span class="bd dn">▼ 10.5%</span></div>
+                <div><small>Register</small><b>6,383</b><span class="bd up">▲ 2.2%</span></div><div><small>CP Register</small><b>28,547</b><span class="bd up">▲ 63.0%</span></div></div></div>
+              <div class="card kpi" id="ov-k-ig"><h3>Ingame</h3><span class="scope">Tỉ lệ: 5 objective · 80% cost</span><div class="st">
+                <div><small>NRU</small><b>3,523</b><span class="bd dn">▼ 64.2%</span></div><div><small>CP NRU</small><b>51,722</b><span class="bd dn">▲ 5.6%</span></div>
+                <div><small>NPU30</small><b>493</b><span class="bd dn">▼ 24.0%</span></div><div><small>NDEP30</small><b>372.60M</b><span class="bd dn">▼ 42.7%</span></div>
+                <div id="ov-roas"><small>ROAS30</small><b>3.32</b><span class="bd up">▲ 131.7%</span></div></div></div>
+            </div></div>
+          <div class="card" id="ov-top" style="margin-top:10px"><h3><span class="no">4.</span> Top Brand Performance</h3>
+            <div style="margin-bottom:6px"><span class="seg"><span class="on">Cost</span><span>View</span><span>NRU</span><span>ROAS30</span></span></div>
+            <table class="tb"><tr><th>#</th><th>Brand</th><th class="r">Actual Cost</th><th class="r">Change</th><th class="r">% of Total</th></tr>
+              <tr><td>1</td><td>brand-a</td><td class="r">80.38M</td><td class="r"><span class="bd dn">▼ 42.8%</span></td><td class="r">35.3%</td></tr>
+              <tr><td>2</td><td>brand-b</td><td class="r">45.35M</td><td class="r"><span class="bd dn">▼ 71.5%</span></td><td class="r">19.9%</td></tr>
+              <tr><td>3</td><td>brand-c</td><td class="r">41.53M</td><td class="r"><span class="bd dn">▼ 73.5%</span></td><td class="r">18.3%</td></tr></table></div>
+        </div></div>
+
+        <!-- 7 · By Brand / By Project -->
+        <div class="page" id="p-brand"><div class="inner">
+          <div class="top"><div><h2>By Brand <span class="star">☆</span></h2><div class="sb"><i></i>Dữ liệu đến 26/10/2026 · Sep 2026</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn">⤒ Export</span></div></div>
+          <div class="card" id="br-card"><h3><span class="no">1.</span> Brand · Actual Cost <small>2. TOTAL · CFG_BRAND · CFG_OBJECTIVE</small></h3>
+            <div style="font-size:10.5px;color:#98a2b3;margin-bottom:6px">33 brand · vs Aug 2026 · bấm một brand để xem sâu</div>
+            <table class="tb"><tr><th>Brand</th><th class="r">Actual Cost ▼</th><th class="r">% of Total</th><th class="r">Aug 2026</th><th class="r">Change</th><th class="r">MD5</th></tr>
+              <tr id="br-brand-a"><td>brand-a</td><td class="r"><b>80.38M</b></td><td class="r">35.3%</td><td class="r">140.60M</td><td class="r">-60.22M · <span class="bd dn">▼ 42.8%</span></td><td class="r">7</td></tr>
+              <tr><td>brand-b</td><td class="r"><b>45.35M</b></td><td class="r">19.9%</td><td class="r">159.26M</td><td class="r">-113.92M · <span class="bd dn">▼ 71.5%</span></td><td class="r">7</td></tr>
+              <tr><td>brand-c</td><td class="r"><b>41.53M</b></td><td class="r">18.3%</td><td class="r">157.00M</td><td class="r">-115.47M · <span class="bd dn">▼ 73.5%</span></td><td class="r">7</td></tr>
+              <tr><td>brand-d</td><td class="r"><b>40.72M</b></td><td class="r">17.9%</td><td class="r">150.10M</td><td class="r">-109.39M · <span class="bd dn">▼ 72.9%</span></td><td class="r">6</td></tr>
+              <tr><td>brand-e</td><td class="r"><b>13.76M</b></td><td class="r">6.1%</td><td class="r">126.64M</td><td class="r">-112.88M · <span class="bd dn">▼ 89.1%</span></td><td class="r">3</td></tr>
+              <tr><td>brand-f</td><td class="r"><b>5.69M</b></td><td class="r">2.5%</td><td class="r">39.47M</td><td class="r">-33.78M · <span class="bd dn">▼ 85.6%</span></td><td class="r">3</td></tr>
+              <tr id="br-stop"><td>brand-g</td><td class="r muted">0</td><td class="r muted">0.0%</td><td class="r">0.86M</td><td class="r">-0.86M · <span class="bd nt">Stopped / No data</span></td><td class="r">0</td></tr></table></div>
+        </div></div>
+        <div class="page" id="p-proj"><div class="inner">
+          <div class="top"><div><h2>By Project <span class="star">☆</span></h2><div class="sb"><i></i>Dữ liệu đến 26/10/2026 · Sep 2026</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn">⤒ Export</span></div></div>
+          <div style="margin-bottom:10px"><span class="seg" id="pj-tabs"><span>All</span><span class="on" id="pj-tab-bk">Build kênh</span><span>Booking KOL</span><span>Bookpost telegram</span><span>Ads trả phí</span><span>Content brand</span><span>Site &amp; Production</span></span></div>
+          <div class="card" id="pj-card"><h3><span class="no">1.</span> Project → objective · Actual Cost</h3>
+            <table class="tb"><tr><th>Project / Objective</th><th class="r">Actual Cost</th><th class="r">% of Total</th><th class="r">Aug 2026</th><th class="r">Change</th><th>Key Metrics</th><th id="pj-med-h">vs 3-month median</th></tr>
+              <tr class="grp"><td>Build kênh</td><td class="r">47.06M</td><td class="r">20.7%</td><td class="r">584.80M</td><td class="r">-537.50M · <span class="bd dn">▼ 91.8%</span></td><td></td><td></td></tr>
+              <tr class="sub" id="pj-aikol"><td>aikol</td><td class="r">38.85M</td><td class="r">17.1%</td><td class="r">35.74M</td><td class="r">+3.11M · <span class="bd up">▲ 8.7%</span></td><td class="kc"><b>View 2.47M</b> · CPV 15.76 · Follower 297</td><td>View <span class="bd dn">▼ 42.8%</span></td></tr>
+              <tr class="sub"><td>kenhtele</td><td class="r">8.20M</td><td class="r">3.6%</td><td class="r">85.63M</td><td class="r">-77.43M · <span class="bd dn">▼ 90.4%</span></td><td class="kc"><b>NRU 1,607</b> · CP NRU 5,106 · NPU30 67</td><td>NRU <span class="bd dn">▼ 63.1%</span></td></tr>
+              <tr class="sub" id="pj-stop"><td>kenhvetinh</td><td class="r muted">0</td><td class="r muted">0.0%</td><td class="r">316.48M</td><td class="r">-316.48M · <span class="bd nt">Stopped / No data</span></td><td class="kc">Chỉ theo dõi cost</td><td class="muted">—</td></tr>
+              <tr class="sub"><td>kenhtrunglap</td><td class="r muted">0</td><td class="r muted">0.0%</td><td class="r">130.72M</td><td class="r">-130.72M · <span class="bd nt">Stopped / No data</span></td><td class="kc">Chỉ theo dõi cost</td><td class="muted">—</td></tr></table></div>
+        </div></div>
+
+        <!-- 8 · By Campaign -->
+        <div class="page" id="p-camp"><div class="inner" id="in-camp">
+          <div class="top"><div><h2>By Campaign <span class="star">☆</span></h2><div class="sb"><i></i>Dữ liệu đến 26/10/2026 · Sep 2026</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn" id="cp-export">⤒ Export</span></div></div>
+          <div class="filters"><div class="fld"><small>Period</small><div style="display:flex;gap:6px"><span class="seg"><span class="on">Month</span><span>Date range</span></span><span class="sel">September 2026 ▾</span></div></div><div class="fld"><small>Brand</small><span class="sel">All Brand ▾</span></div><div class="fld"><small>Project</small><span class="sel">All Project ▾</span></div><div class="fld"><small>Objective</small><span class="sel">All Objective ▾</span></div><div class="fld"><small>OS</small><span class="sel">All OS ▾</span></div><div class="fld"><small>MD5</small><span class="sel">All MD5 ▾</span></div><span class="hint">Sep 2026 · không có Compare</span></div>
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+            <div class="card" id="cp-n"><h3>Campaigns</h3><div class="big">6</div><div class="full">1 Running · 5 Ended</div></div>
+            <div class="card" id="cp-cost"><h3>Actual Cost</h3><div class="big">413.80<small>M</small></div><div class="full">413,797,582 · Cả đợt của các campaign trong bảng</div></div>
+            <div class="card" id="cp-in"><h3>In Period</h3><div class="big">226.51<small>M</small></div><div class="full">226,511,236 · Phần chi trong Sep 2026</div></div>
+          </div>
+          <div class="card" id="cp-table"><h3><span class="no">1.</span> Campaign Table <small>bấm một dòng để xem chi tiết</small></h3>
+            <table class="tb"><tr><th>Campaign</th><th>Objective</th><th>Project</th><th>From</th><th>To</th><th class="r">Days</th><th>Status</th><th class="r">Actual Cost ▼</th><th class="r">In Period</th><th>Key Metrics</th><th class="r">MD5</th></tr>
+              <tr id="cp-r1"><td><b>Camp T08/2026</b></td><td>megalive</td><td>Booking KOL</td><td>18/09/2026</td><td>18/10/2026</td><td class="r">31</td><td><span class="bd nt">Ended</span></td><td class="r" id="cp-r1-c"><b>172.00M</b></td><td class="r" id="cp-r1-i">68.80M</td><td class="kc"><b>NRU 1,824</b> · CP NRU 94,298 · NPU30 279</td><td class="r">44</td></tr>
+              <tr id="cp-r2"><td><b>Camp T9_2026</b></td><td>telegram</td><td>Bookpost telegram</td><td>18/09/2026</td><td id="cp-r2-to">27/10/2026</td><td class="r">40</td><td><span class="bd run" id="cp-r2-st">Running</span></td><td class="r"><b>116.47M</b></td><td class="r">32.38M</td><td class="kc"><b>NRU 282</b> · CP NRU 413,007 · NPU30 198</td><td class="r">4</td></tr>
+              <tr><td><b>Camp T8_2026</b></td><td>telegram</td><td>Bookpost telegram</td><td>01/09/2026</td><td>27/09/2026</td><td class="r">27</td><td><span class="bd nt">Ended</span></td><td class="r"><b>71.90M</b></td><td class="r">71.90M</td><td class="kc"><b>NRU 262</b> · CP NRU 274,449 · NPU30 180</td><td class="r">4</td></tr>
+              <tr><td><b>Camp T09/2026</b></td><td>aikol</td><td>Build kênh</td><td>02/09/2026</td><td>15/09/2026</td><td class="r">14</td><td><span class="bd nt">Ended</span></td><td class="r"><b>38.85M</b></td><td class="r">38.85M</td><td class="kc"><b>View 2.47M</b> · CPV 15.76 · Follower 297</td><td class="r">0</td></tr>
+              <tr><td><b>Camp_T9.2026</b></td><td>kenhtele</td><td>Build kênh</td><td>01/09/2026</td><td>30/09/2026</td><td class="r">30</td><td><span class="bd nt">Ended</span></td><td class="r"><b>8.20M</b></td><td class="r">8.20M</td><td class="kc"><b>NRU 1,607</b> · CP NRU 5,106 · NPU30 67</td><td class="r">5</td></tr>
+              <tr><td><b>Camp_T9.2026</b></td><td>keomember</td><td>Site &amp; Production</td><td>01/09/2026</td><td>30/09/2026</td><td class="r">30</td><td><span class="bd nt">Ended</span></td><td class="r"><b>6.37M</b></td><td class="r">6.37M</td><td class="kc">Chỉ theo dõi cost</td><td class="r">5</td></tr></table></div>
+          <div class="card" id="cp-detail" style="margin-top:10px;display:none"><h3><span class="no">2.</span> Campaign Detail · megalive · Camp T08/2026 <span class="btn" id="cp-clear" style="margin-left:auto">Bỏ chọn campaign</span></h3>
+            <div style="font-size:11px;color:#98a2b3;margin-bottom:8px">18/09/2026 → 18/10/2026 · 31 ngày · Ended · Actual Cost 172.00M</div>
+            <div class="kgrid" id="cp-kpi" style="grid-template-columns:1fr 1fr">
+              <div class="card kpi"><h3>GA · Site Traffic</h3><span class="scope">Tỉ lệ: 1 objective · 100% cost</span><div class="st"><div><small>New User</small><b>779</b><em>Cả đợt</em></div><div><small>Session</small><b>1,212</b><em>Cả đợt</em></div><div><small>Register</small><b>1,749</b><em>Cả đợt</em></div><div><small>CP Register</small><b>98,342</b><em>Cả đợt</em></div></div></div>
+              <div class="card kpi"><h3>Ingame</h3><span class="scope">Tỉ lệ: 1 objective · 100% cost</span><div class="st"><div><small>NRU</small><b>1,824</b><em>Cả đợt</em></div><div><small>CP NRU</small><b>94,298</b><em>Cả đợt</em></div><div><small>NPU30</small><b>279</b><em>Cả đợt</em></div><div><small>NDEP30</small><b>218.53M</b><em>Cả đợt</em></div></div></div>
+            </div>
+            <div class="grid" style="grid-template-columns:1.3fr 1fr;margin-top:10px">
+              <div class="card" id="cp-daily"><h3>Daily Cost <small>theo ngày · cột chồng theo Brand</small></h3>
+                <div class="legend"><span><i style="background:#60a5fa"></i>brand-e</span><span><i style="background:#32d583"></i>brand-d</span><span><i style="background:#fdb022"></i>brand-c</span><span><i style="background:#a78bfa"></i>brand-a</span><span><i style="background:#22d3ee"></i>brand-b</span></div>
+                <div class="bars" id="cp-bars"></div><div class="axis"><span>18/09</span><span>18/10</span></div></div>
+              <div class="card" id="cp-tops"><h3>Top OS · Top Brand</h3>
+                <table class="tb"><tr><th>OS</th><th class="r">Actual Cost</th><th class="r">% campaign</th></tr><tr><td>os-01</td><td class="r">172.00M</td><td class="r">100.0%</td></tr></table>
+                <table class="tb" style="margin-top:6px"><tr><th>Brand</th><th class="r">Actual Cost</th><th class="r">% campaign</th></tr><tr><td>brand-e</td><td class="r">34.40M</td><td class="r">20.0%</td></tr><tr><td>brand-d</td><td class="r">34.40M</td><td class="r">20.0%</td></tr><tr><td>brand-c · brand-a · brand-b</td><td class="r">34.40M mỗi brand</td><td class="r">20.0%</td></tr></table></div>
+            </div>
+          </div>
+        </div></div>
+
+        <!-- 9 · By MD5 -->
+        <div class="page" id="p-md5"><div class="inner" id="in-md5">
+          <div class="top"><div><h2>By MD5 <span class="star">☆</span></h2><div class="sb"><i></i>Dữ liệu đến 26/10/2026 · Sep 2026</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn">⤒ Export</span></div></div>
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+            <div class="card" id="md-active"><h3><span class="no">1.</span> Active MD5</h3><div class="big">32</div></div>
+            <div class="card" id="md-new"><h3><span class="no">2.</span> New MD5</h3><div class="big">18</div><div class="full">Tháng đầu có chi nằm trong kỳ</div></div>
+            <div class="card" id="md-stop"><h3><span class="no">3.</span> Stopped MD5 / No data</h3><div class="big">177</div><div class="full">Có chi ở Aug 2026, kỳ này chưa có</div></div>
+          </div>
+          <div class="card" id="md-rank"><h3><span class="no">4.</span> MD5 Ranking · Actual Cost <small>32 MD5 + 8 dòng không MD5 · vs Aug 2026</small></h3>
+            <table class="tb"><tr><th>MD5</th><th>OS</th><th>Brand</th><th>Objective</th><th>First Cost Month</th><th class="r">Actual Cost ▼</th></tr>
+              <tr><td class="mono">e04e8d26<span class="cp" id="md-copy">Copy</span></td><td>os-02</td><td>brand-b</td><td>telegram</td><td>Jun '26</td><td class="r">25.89M</td></tr>
+              <tr><td class="mono">7b2a6ab0<span class="cp">Copy</span></td><td>os-02</td><td>brand-d</td><td>telegram</td><td>Jun '26</td><td class="r">24.04M</td></tr>
+              <tr><td class="mono">bf6b2250<span class="cp">Copy</span></td><td>os-01</td><td>brand-d <span class="muted">+1</span></td><td>megalive</td><td>Sep '26</td><td class="r">13.76M</td></tr>
+              <tr><td class="mono">b6e6d600<span class="cp">Copy</span></td><td>os-03</td><td>brand-a</td><td>telegram</td><td>Sep '26</td><td class="r">13.41M</td></tr>
+              <tr><td class="mono">b5664b53<span class="cp">Copy</span></td><td>os-03</td><td>brand-c</td><td>telegram</td><td>Sep '26</td><td class="r">13.41M</td></tr>
+              <tr><td class="mono">3247292d<span class="cp">Copy</span></td><td>os-03</td><td>brand-a</td><td>telegram</td><td>Jul '26</td><td class="r">11.45M</td></tr>
+              <tr id="md-0c4a"><td class="mono" id="md-0c4a-c">0c4a67a1<span class="cp">Copy</span></td><td>os-03</td><td>brand-c</td><td>telegram</td><td>Aug '26</td><td class="r">11.45M</td></tr>
+              <tr><td class="muted">(no MD5)</td><td>os-04</td><td>brand-a</td><td>aikol</td><td>Aug '26</td><td class="r">9.49M</td></tr></table></div>
+          <div class="card" id="md-detail" style="margin-top:10px;display:none"><h3><span class="no">5.</span> MD5 Detail · 0c4a67a1… <span class="btn" style="margin-left:auto">Bỏ chọn MD5</span></h3>
+            <div style="font-size:11px;color:#98a2b3;margin-bottom:6px">0c4a67a1… · Sep 2026 · % là phần của MD5 này trong kỳ</div>
+            <table class="tb"><tr><th>Objective / Brand / OS</th><th class="r">Actual Cost</th><th class="r">% MD5</th><th>Key Metrics</th></tr>
+              <tr><td>Objective · telegram</td><td class="r">11.45M</td><td class="r">100.0%</td><td class="kc"><b>NRU 55</b> · CP NRU 208,151 · NPU30 40</td></tr>
+              <tr><td>Brand · brand-c</td><td class="r">11.45M</td><td class="r">100.0%</td><td class="kc"><b>NRU 55</b> · CP NRU 208,151 · NPU30 40</td></tr>
+              <tr><td>OS · os-03</td><td class="r">11.45M</td><td class="r">100.0%</td><td class="kc"><b>NRU 55</b> · CP NRU 208,151 · NPU30 40</td></tr></table></div>
+          <div class="card" id="md-cohort" style="margin-top:10px"><h3><span class="no">6.</span> MD5 Cohort <small>% MD5 còn chi sau 1 / 2 / 3 tháng</small></h3>
+            <table class="tb"><tr><th>First Cost Month</th><th class="r">MD5s</th><th class="r">After 1 mo</th><th class="r">2 mo</th><th class="r">3 mo</th><th class="r">Actual Cost</th></tr>
+              <tr><td>Jun '26</td><td class="r">155</td><td class="hc">34.2%</td><td class="hc">32.9%</td><td class="hc">4.5%</td><td class="r">1.52B</td></tr>
+              <tr id="md-coh-jul"><td>Jul '26</td><td class="r">98</td><td class="hc" style="background:rgba(96,165,250,.35)">80.6%</td><td class="hc">1.0%</td><td class="r muted">—</td><td class="r">718.10M</td></tr>
+              <tr><td>Aug '26</td><td class="r">32</td><td class="hc">18.8%</td><td class="r muted">—</td><td class="r muted">—</td><td class="r">160.60M</td></tr>
+              <tr><td>Sep '26</td><td class="r">18</td><td class="r muted">—</td><td class="r muted">—</td><td class="r muted">—</td><td class="r">101.18M</td></tr></table></div>
+        </div></div>
+
+        <!-- 10 · By OS -->
+        <div class="page" id="p-os"><div class="inner" id="in-os">
+          <div class="top"><div><h2>By OS <span class="star">☆</span></h2><div class="sb"><i></i>Dữ liệu đến 26/10/2026 · Sep 2026</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn">⤒ Export</span></div></div>
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+            <div class="card"><h3><span class="no">1.</span> Active OS</h3><div class="big">13</div></div>
+            <div class="card"><h3><span class="no">2.</span> Active MD5</h3><div class="big">32</div></div>
+            <div class="card"><h3><span class="no">3.</span> Actual Cost</h3><div class="big">227.44<small>M</small></div><div class="full">227,435,935</div></div>
+          </div>
+          <div class="card" id="os-card"><h3><span class="no">4.</span> OS Scorecard <small>vs Aug 2026 · bấm một OS để xem chi tiết</small></h3>
+            <table class="tb"><tr><th>OS</th><th class="r">MD5</th><th class="r">Actual Cost</th><th class="r">% of Total</th><th class="r">Change</th><th class="r">CPV</th><th class="r">CP NRU</th></tr>
+              <tr id="os-os-01"><td>os-01</td><td class="r">14</td><td class="r"><b>68.80M</b></td><td class="r">30.3%</td><td class="r">+4.30M · <span class="bd up">▲ 6.7%</span></td><td class="r">379</td><td class="r">75,027</td></tr>
+              <tr><td>os-02</td><td class="r">4</td><td class="r"><b>55.50M</b></td><td class="r">24.4%</td><td class="r">-1.42M · <span class="bd dn">▼ 2.5%</span></td><td class="r muted">—</td><td class="r">340,455</td></tr>
+              <tr><td>os-03</td><td class="r">4</td><td class="r"><b>49.72M</b></td><td class="r">21.9%</td><td class="r">-7.22M · <span class="bd dn">▼ 12.7%</span></td><td class="r muted">—</td><td class="r">235,629</td></tr>
+              <tr><td>os-04</td><td class="r">0</td><td class="r"><b>9.49M</b></td><td class="r">4.2%</td><td class="r">0 · <span class="bd nt">0.0%</span></td><td class="r muted">—</td><td class="r muted">—</td></tr>
+              <tr><td>os-05</td><td class="r">5</td><td class="r"><b>8.20M</b></td><td class="r">3.6%</td><td class="r">-395,112 · <span class="bd dn">▼ 4.6%</span></td><td class="r muted">—</td><td class="r">34,474</td></tr>
+              <tr><td>os-06</td><td class="r">5</td><td class="r"><b>6.37M</b></td><td class="r">2.8%</td><td class="r">+1.54M · <span class="bd up">▲ 31.9%</span></td><td class="r muted">—</td><td class="r muted">—</td></tr>
+              <tr><td class="muted">… 7 OS khác</td><td></td><td class="r muted">2.93M – 4.75M</td><td></td><td></td><td></td><td></td></tr></table></div>
+          <div class="card" id="os-detail" style="margin-top:10px;display:none"><h3><span class="no">5.</span> OS Detail · os-01 <span class="btn" style="margin-left:auto">Bỏ chọn OS</span></h3>
+            <div style="font-size:11px;color:#98a2b3;margin-bottom:6px">Sep 2026 · % là phần của OS này trong kỳ</div>
+            <div class="grid" style="grid-template-columns:1fr 1fr">
+              <div><div class="hbar"><span>Aug 2026</span><span class="t"><i data-w="94"></i></span><b>64.50M</b></div><div class="hbar"><span>Sep 2026</span><span class="t"><i data-w="100"></i></span><b>68.80M</b></div><div style="font-size:10.5px;color:#98a2b3;margin-top:6px">Trên trang thật: Actual Cost by Month — 12 tháng tới kỳ đang xem.</div></div>
+              <table class="tb"><tr><th>Top MD5</th><th class="r">Actual Cost</th><th class="r">% OS</th></tr><tr><td class="mono">bf6b2250…</td><td class="r">13.76M</td><td class="r">20.0%</td></tr><tr><td class="mono">26a1fa80…</td><td class="r">6.88M</td><td class="r">10.0%</td></tr><tr><td class="mono">f811fc88…</td><td class="r">6.88M</td><td class="r">10.0%</td></tr><tr><td class="mono">77403661…</td><td class="r">6.88M</td><td class="r">10.0%</td></tr></table>
+            </div></div>
+        </div></div>
+
+        <!-- 11 · Data Explorer -->
+        <div class="page" id="p-exp"><div class="inner">
+          <div class="top"><div><h2>Data Explorer <span class="star">☆</span></h2><div class="sb">Tự chọn chiều và chỉ số — chạy trên dữ liệu đã đọc từ SOC DATA 2026</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri">⟳ Refresh</span><span class="btn">⤒ Export</span></div></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-size:10.5px"><b style="color:#98a2b3;letter-spacing:.08em;font-size:9px">PRESETS</b>
+            <span class="sel" id="ex-pre">Cost by Project × Month</span><span class="sel">Social satellite channels by OS</span><span class="sel">KOL funnel by Brand</span><span class="sel">Budget vs Actual by Objective</span><span class="sel">Budget by PIC</span><span class="sel">MD5 Cohort</span><b style="color:#98a2b3;letter-spacing:.08em;font-size:9px">SAVED VIEWS</b></div>
+          <div class="grid" style="grid-template-columns:230px 1fr">
+            <div class="card" id="ex-fields"><div class="seg" style="margin-bottom:8px"><span class="on">Monthly</span><span>Daily</span><span>Budget</span></div>
+              <div style="font-size:10.5px;color:#cbd5e1;line-height:1.75"><b style="font-size:9px;color:#98a2b3;letter-spacing:.08em">TIME</b><br>Year · Half · Quarter · Month<br><b style="font-size:9px;color:#98a2b3;letter-spacing:.08em">BRAND</b><br>Brand · Brand Type · Brand Slug<br><b style="font-size:9px;color:#98a2b3;letter-spacing:.08em">OBJECTIVE</b><br>Project · Objective · KPI family<br><b style="font-size:9px;color:#98a2b3;letter-spacing:.08em">MD5 &amp; OS</b><br>OS · MD5 · First Cost Month<br><b style="font-size:9px;color:#98a2b3;letter-spacing:.08em">COST · SOCIAL · GA · INGAME</b><br>Actual Cost · View · NRU · NPU30…</div></div>
+            <div>
+              <div class="card" id="ex-query"><h3><span class="no">1.</span> Query</h3>
+                <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
+                  <div class="card" style="padding:7px 10px"><small style="font-size:9px;color:#98a2b3;font-weight:800">ROWS</small><div id="ex-rows" style="min-height:20px;margin-top:3px"></div></div>
+                  <div class="card" style="padding:7px 10px"><small style="font-size:9px;color:#98a2b3;font-weight:800">COLUMNS</small><div id="ex-cols" style="min-height:20px;margin-top:3px"></div></div>
+                  <div class="card" style="padding:7px 10px"><small style="font-size:9px;color:#98a2b3;font-weight:800">VALUES</small><div id="ex-vals" style="min-height:20px;margin-top:3px"></div></div>
+                  <div class="card" style="padding:7px 10px"><small style="font-size:9px;color:#98a2b3;font-weight:800">FILTERS</small><div style="font-size:10.5px;color:#98a2b3;margin-top:3px">Bấm "Filter" cạnh một chiều</div></div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:11px"><span>From</span><span class="sel" id="ex-from">—</span><span>to</span><span class="sel" id="ex-to">—</span><span class="btn" style="margin-left:auto">Xoá hết</span><span class="btn" id="ex-save">Lưu view</span><span class="btn pri" id="ex-run">Chạy</span></div></div>
+              <div class="card" id="ex-result" style="margin-top:10px;display:none"><h3><span class="no">2.</span> Result <small>5 dòng × 6 cột · Actual Cost · Export CSV</small></h3>
+                <table class="tb"><tr><th>Project</th><th class="r">Apr 2026</th><th class="r">May 2026</th><th class="r">Jun 2026</th><th class="r">Jul 2026</th><th class="r">Aug 2026</th><th class="r">Sep 2026</th></tr>
+                  <tr><td>Build kênh</td><td class="r">707,240,259</td><td class="r">602,853,264</td><td class="r">587,560,113</td><td class="r">573,647,016</td><td class="r">583,036,070</td><td class="r">47,057,178</td></tr>
+                  <tr><td>Booking KOL</td><td class="r">63,855,000</td><td class="r">194,274,000</td><td class="r">445,480,000</td><td class="r">409,102,000</td><td class="r">276,576,000</td><td class="r">68,800,000</td></tr>
+                  <tr><td>Bookpost telegram</td><td class="r muted">—</td><td class="r muted">—</td><td class="r">16,963,528</td><td class="r">87,394,488</td><td class="r">113,850,224</td><td class="r">105,211,983</td></tr>
+                  <tr><td>Site &amp; Production</td><td class="r">20,013,638</td><td class="r">15,372,506</td><td class="r">23,872,836</td><td class="r">2,888,167</td><td class="r">8,965,500</td><td class="r">6,366,774</td></tr>
+                  <tr><td>Content brand</td><td class="r muted">—</td><td class="r muted">—</td><td class="r">12,412,667</td><td class="r">11,962,761</td><td class="r">18,819,147</td><td class="r muted">—</td></tr>
+                  <tr class="grp" id="ex-total"><td>Total</td><td class="r">791,108,897</td><td class="r">812,499,770</td><td class="r">1,086,289,119</td><td class="r">1,084,994,433</td><td class="r">1,001,246,941</td><td class="r">227,435,935</td></tr></table></div>
+            </div>
+          </div>
+        </div></div>
+
+        <!-- 12 · Data Validation -->
+        <div class="page" id="p-dq"><div class="inner" id="in-dq">
+          <div class="top"><div><h2>Data Validation <span class="star">☆</span></h2><div class="sb">Dữ liệu từ 01/01/2025 đến 26/10/2026 · 5 sheet Dự chi</div></div><div class="acts"><span class="btn">☀ Light</span><span class="btn pri" id="dq-refresh">⟳ Refresh</span><span class="btn">⤒ Export</span></div></div>
+          <div class="grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:10px" id="dq-sum">
+            <div class="card"><h3>Critical</h3><div class="big">0</div></div>
+            <div class="card"><h3>To fix</h3><div class="big" style="color:#fdb022">10</div></div>
+            <div class="card"><h3>Info</h3><div class="big">7</div></div>
+            <div class="card"><h3>Data rows used</h3><div class="big">51,561</div></div>
+            <div class="card"><h3>Budget rows</h3><div class="big">66</div></div>
+          </div>
+          <div class="card" id="dq-issues"><h3><span class="no">1.</span> Detected issues <small>sắp theo mức độ, rồi theo chi phí bị ảnh hưởng</small></h3>
+            <table class="tb"><tr><th>Severity</th><th>Issue</th><th class="r">Count</th><th class="r">Affected Cost</th><th>How to fix</th></tr>
+              <tr><td><span class="bd" style="color:#fdb022;background:rgba(247,144,9,.14)">To fix</span></td><td>Dòng Dự chi trống Objective<br><span class="muted mono">PLAN_OBJECTIVE_BLANK</span></td><td class="r">21</td><td class="r">3.38B</td><td class="muted">Điền Objective (đúng giá trị trong 2. TOTAL) để so được với thực chi.</td></tr>
+              <tr id="dq-camp"><td><span class="bd" style="color:#fdb022;background:rgba(247,144,9,.14)">To fix</span></td><td>Năm trong mã campaign khác năm của dòng<br><span class="muted mono">CAMPAIGN_YEAR_MISMATCH</span></td><td class="r">5,950</td><td class="r">1.58B</td><td class="muted">Sửa mã campaign (thường do kéo fill nhầm). Mẫu gợi ý: Camp_T9.2026.</td></tr>
+              <tr><td><span class="bd" style="color:#fdb022;background:rgba(247,144,9,.14)">To fix</span></td><td>Ngày bị đảo ngày↔tháng — đã đảo lại<br><span class="muted mono">DATE_SWAPPED_FIXED</span></td><td class="r">1,879</td><td class="r">1.20B</td><td class="muted">Sửa ở nguồn: đổi Locale của sheet sang Việt Nam hoặc nhập ngày dạng ngày/tháng/năm.</td></tr>
+              <tr id="dq-brand"><td><span class="bd" style="color:#fdb022;background:rgba(247,144,9,.14)">To fix</span></td><td>Brand chưa có trong CFG_BRAND<br><span class="muted mono">BRAND_UNMAPPED</span></td><td class="r">1,747</td><td class="r">238.56M</td><td class="muted">Thêm slug vào tab CFG_BRAND (Brand name, Brand code, Slug alias).</td></tr>
+              <tr><td><span class="bd" style="color:#fdb022;background:rgba(247,144,9,.14)">To fix</span></td><td>Ngày lệch với Year/Month (không vào view tuần)<br><span class="muted mono">DATE_PERIOD_MISMATCH</span></td><td class="r">31</td><td class="r">26.03M</td><td class="muted">Kiểm tra lại ngày hoặc Year/Month của dòng.</td></tr></table></div>
+          <div class="card" id="dq-codes" style="margin-top:10px"><h3><span class="no">2.</span> Campaign Codes</h3>
+            <div style="font-size:10.5px;color:#98a2b3;margin-bottom:6px">Một campaign = Objective + mã Campaign. Mẫu gợi ý đặt tên chung: Camp_T&lt;tháng&gt;.&lt;năm 4 số&gt;, vd Camp_T9.2026. Mã có khoảng trắng kép hiện từng khoảng trắng là ␣.</div>
+            <table class="tb"><tr><th>Year mismatch · Objective</th><th>Campaign</th><th>Vì sao bị báo</th></tr>
+              <tr><td>kenhvetinh</td><td class="mono">Camp_T7.2027</td><td class="muted">Năm 2027 trong mã, dòng thuộc năm 2026 — thường do kéo fill tăng năm</td></tr>
+              <tr><td>kenhtrunglap</td><td class="mono">Camp_T7.2027 … Camp_T7.2056</td><td class="muted">Cả loạt năm tăng dần</td></tr>
+              <tr><td>buildchannel</td><td class="mono">Camp_T12.2026</td><td class="muted">Mã năm 2026 ghi trên các dòng năm 2025</td></tr></table></div>
+        </div></div>
+
+        <!-- 14 · quy trình -->
+        <div class="page solo" id="p-outro"><div class="inner ov">
+          <h3>Dùng SOC Dashboard trong công việc hằng ngày</h3>
+          <p class="lead">Bốn tình huống hay gặp. Mỗi tình huống đi qua 2–3 trang; link gửi cho nhau luôn giữ đúng kỳ và bộ lọc đang xem.</p>
+          <div class="wf">
+            <div class="box" id="wf1"><small>ĐẦU TUẦN</small><b>Tuần trước chi thế nào?</b><ol><li>Hub: xem chip "vấn đề cần xử lý".</li><li>Performance → Week: tuần vừa xong so với tuần trước (WoW).</li><li>Brand / Project giảm mạnh → bấm để lọc cả trang.</li></ol></div>
+            <div class="box" id="wf2"><small>CUỐI THÁNG</small><b>Báo cáo tháng</b><ol><li>Overview: tổng chi, KPI Scorecard, Under / Over budget.</li><li>Performance → Month: Budget Used, Breakdown, Detail Table.</li><li>Export → Lưu dưới dạng PDF gửi quản lý.</li></ol></div>
+            <div class="box" id="wf3"><small>NGHIỆM THU CAMPAIGN</small><b>Đợt này chi bao nhiêu?</b><ol><li>By Campaign: chọn tháng có đợt (hoặc Date range).</li><li>Bấm dòng campaign → Campaign Detail: From → To, Actual Cost cả đợt, KPI.</li><li>Gửi link (có camp=…) hoặc Export PDF.</li></ol></div>
+            <div class="box" id="wf4"><small>SỐ LẠ / THIẾU</small><b>Dữ liệu nguồn sai ở đâu?</b><ol><li>Data Validation: đọc dòng To fix có Affected Cost lớn nhất.</li><li>Sửa trên sheet SOC DATA 2026 (mã campaign, ngày, CFG_BRAND…).</li><li>Bấm Refresh — số cập nhật sau vài giây đến 1 phút.</li></ol></div>
+          </div>
+        </div></div>
+
+        <!-- hộp thoại in / PDF -->
+        <div class="print" id="print"><div class="sheet"><h6>Performance</h6><div style="color:#667085">Dữ liệu đến 26/10/2026 · Sep 2026 · in ở theme sáng</div>
+            <div class="pc"><b>Actual Cost · Sep 2026</b><div style="font-size:22px;font-weight:700">227.44M</div><div style="color:#667085">▼ 77.3% vs Aug 2026 (1.00B)</div></div>
+            <div class="pc"><b>Budget Used</b><div style="font-size:18px;font-weight:700">17.8% used</div><div style="color:#667085">Actual 227.44M · Budget 1.28B</div></div>
+            <div class="pc"><b>Cost by Project</b><div style="color:#667085">Bookpost telegram 105.21M · Booking KOL 68.80M · Build kênh 47.06M · Site &amp; Production 6.37M</div></div>
+            <div style="color:#98a2b3;margin-top:8px">Menu, thanh lọc và các nút được ẩn khi in; bảng in đủ dòng.</div></div>
+          <div class="side"><b style="font-size:18px">In</b><div class="row"><span>Đích</span><span class="sv" id="pr-dest">Lưu dưới dạng PDF ▾</span></div><div class="row"><span>Trang</span><span class="sv">Tất cả ▾</span></div><div class="row"><span>Bố cục</span><span class="sv">Dọc ▾</span></div><div class="row"><span>Màu</span><span class="sv">Màu ▾</span></div><div class="go"><span>Huỷ</span><span class="p" id="pr-save">Lưu</span></div></div></div>
+
+        <div class="case" id="case"></div>
+        <div class="bub" id="bub"></div>
+        <div class="toast" id="toast"></div>
+        <svg class="cursor hide" id="cur" viewBox="0 0 22 30"><path d="M2 2 L2 24 L8 18 L12 28 L16 26 L12 17 L20 17 Z" fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="cap"><span class="tag" id="cap-tag">Bắt đầu</span><p id="cap">Bấm ▶ Chạy để xem từ đầu, hoặc chọn một chương ở trên.</p></div>
+  </div>
+  <div class="foot"><span>Số liệu minh hoạ: tên brand, OS, MD5 và số tiền đã được đổi; tỉ lệ và cách đọc giữ như bản thật. Màn hình là bản mô phỏng để học cách dùng.</span><span><kbd>Space</kbd> chạy/dừng · <kbd>→</kbd> cảnh tiếp · <kbd>←</kbd> cảnh trước</span></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const stage=$('stage'),vp=$('vp'),cur=$('cur');
+let scale=1;function fit(){scale=vp.clientWidth/1200;stage.style.transform='scale('+scale+')'}
+fit();addEventListener('resize',fit);
+
+// ---------- menu bên trái (giống SOC Dashboard) ----------
+const ICON={hub:'<path d="M9.9 15.5A2 2 0 0 0 8.5 14l-6.1-1.6a.5.5 0 0 1 0-1L8.5 10A2 2 0 0 0 9.9 8.5l1.6-6.1a.5.5 0 0 1 1 0L14 8.5A2 2 0 0 0 15.5 10l6.1 1.5a.5.5 0 0 1 0 1L15.5 14a2 2 0 0 0-1.4 1.4l-1.6 6.1a.5.5 0 0 1-1 0z"/>',
+ ovw:'<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+ perf:'<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M3 10h18M8 2v4"/>',
+ brand:'<circle cx="12" cy="12" r="9"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 18V6"/>',
+ proj:'<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+ camp:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+ md5:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+ os:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M10 6h4M10 10h4M10 14h4"/>',
+ exp:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5M3 12a9 3 0 0 0 18 0"/>',
+ dq:'<path d="M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.7 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.5 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>'};
+const NAV=[['hub','Dashboard Hub'],['ovw','Overview'],['perf','Performance'],['brand','By Brand'],['proj','By Project'],['camp','By Campaign'],['md5','By MD5'],['os','By OS'],['exp','Data Explorer'],['dq','Data Validation']];
+$('nav').innerHTML=NAV.map(n=>'<a id="nav-'+n[0]+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICON[n[0]]+'</svg>'+n[1]+'</a>').join('');
+function navOn(k){NAV.forEach(n=>$('nav-'+n[0]).classList.toggle('on',n[0]===k))}
+
+// ---------- công cụ đạo diễn ----------
+let speed=0.8,running=false,paused=false,token=0,sceneIdx=0,boost=1,seekCap=0,capCount=0;
+const tick=ms=>new Promise(r=>setTimeout(r,ms));
+async function w(ms,t){
+  if(t!==token)throw 'stop';
+  if(boost>1){await Promise.resolve();return}
+  let left=ms/speed,last=Date.now();
+  while(left>0){
+    if(t!==token)throw 'stop';
+    if(paused){await tick(120);last=Date.now();continue}
+    await tick(40);const now=Date.now();left-=now-last;last=now;
+  }
+}
+function pos(el){const r=el.getBoundingClientRect(),s=stage.getBoundingClientRect();return{x:(r.left-s.left)/scale+r.width/2,y:(r.top-s.top)/scale+r.height/2,w:r.width/scale,h:r.height/scale,l:(r.left-s.left)/scale,t:(r.top-s.top)/scale}}
+const el=sel=>typeof sel==='string'?$(sel):sel;
+async function move(t,sel,dx=0,dy=0){const e=el(sel),p=pos(e);cur.classList.remove('hide');cur.style.left=(p.x-4+dx)+'px';cur.style.top=(p.y-2+dy)+'px';await w(700,t)}
+async function click(t,sel){const e=el(sel);await move(t,e);const p=pos(e);const r=document.createElement('div');r.className='ripple';r.style.left=p.x+'px';r.style.top=p.y+'px';stage.appendChild(r);setTimeout(()=>r.remove(),600);e.classList.add('pressed');await w(160,t);e.classList.remove('pressed');await w(220,t)}
+function cap(tag,text){$('cap-tag').textContent=tag;$('cap').textContent=text;capCount++;if(seekCap&&capCount>=seekCap){boost=1;seekCap=0}markStep(capCount)}
+async function toast(t,text){const e=$('toast');e.textContent=text;e.classList.add('on');await w(1800,t);e.classList.remove('on')}
+function hlOn(sel){el(sel).classList.add('hl')}function hlOff(sel){el(sel).classList.remove('hl')}
+async function hl(t,sel,ms=1200){hlOn(sel);await w(ms,t);hlOff(sel)}
+function clearHl(){document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'))}
+// bong bóng giải thích đặt cạnh một phần tử: side r / l / b / t
+function bub(sel,html,side='b'){const b=$('bub');if(!sel){b.classList.remove('on');return}const p=pos(el(sel));b.innerHTML=html;b.classList.add('on');
+  const bw=Math.min(290,b.offsetWidth||290),bh=b.offsetHeight||60;let x,y;
+  if(side==='r'){x=p.l+p.w+12;y=p.t}else if(side==='l'){x=p.l-bw-12;y=p.t}else if(side==='t'){x=p.l;y=p.t-bh-10}else{x=p.l;y=p.t+p.h+10}
+  x=Math.max(8,Math.min(1200-bw-8,x));y=Math.max(54,Math.min(720-bh-8,y));b.style.left=x+'px';b.style.top=y+'px'}
+function caseOn(text){const c=$('case');if(!text){c.classList.remove('on');return}c.textContent='CASE · '+text;c.classList.add('on')}
+const BASE='script.google.com/macros/s/AKfyc…/exec';
+async function addr(t,path){const a=$('addr');const full=BASE+path;a.innerHTML='';for(let i=0;i<full.length;i+=3){a.textContent=full.slice(0,i+3);await w(10,t)}a.innerHTML=BASE+'<b>'+path.replace(/&/g,'&amp;')+'</b>'}
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===id));stage.classList.toggle('solo',$(id).classList.contains('solo'))}
+async function scrollTo(t,inner,y){$(inner).style.transform='translateY('+(-y)+'px)';await w(800,t)}
+function scrollReset(){document.querySelectorAll('.page .inner').forEach(i=>i.style.transform='')}
+function bars(rootSel){el(rootSel).querySelectorAll('[data-w]').forEach(i=>i.style.width=i.getAttribute('data-w')+'%')}
+function barsReset(rootSel){el(rootSel).querySelectorAll('[data-w]').forEach(i=>i.style.width='0')}
+function ddAt(dd,btn){const b=$(btn),d=$(dd);d.style.left=b.offsetLeft+'px';d.style.top=(b.offsetTop+b.offsetHeight+6)+'px';d.classList.add('on')}
+function off(){bub(null);caseOn('');clearHl();$('print').classList.remove('on');document.querySelectorAll('.dd').forEach(d=>d.classList.remove('on'))}
+
+// ---------- trạng thái từng trang ----------
+const PERF={
+ month:{sub:'Dữ liệu đến 26/10/2026 · Sep 2026',g:'month',psel:'September 2026 ▾',c1:'MoM',hint:'Sep 2026 vs Aug 2026',costT:'Actual Cost · Sep 2026',cost:'227.44',full:'227,435,935',d:'<span class="bd dn">▼ 77.3%</span>vs Aug 2026 (1.00B)',avg:'7.58',la:'Chi phí nghiệm thu theo tháng, ghi vào ngày 01',lb:'Đã tính trong Actual Cost',n:[6,4,32],bu:'17.8% used',m:17.8,ba:'227.44M',bb:'1.28B',br:'1.05B',whole:true,notes:[],proj:'Sep 2026'},
+ week:{sub:'Dữ liệu đến 26/10/2026 · W42 2026 (12/10–18/10)',g:'week',psel:'W42 2026 (12/10–18/10) ▾',c1:'WoW',hint:'W42 2026 (12/10–18/10) vs W41 2026 (05/10–11/10)',costT:'Actual Cost · W42 2026',cost:'60.18',full:'60,178,268',d:'<span class="bd dn">▼ 6.5%</span>vs W41 2026 (64.38M)',avg:'8.60',la:'Nghiệm thu tháng Oct 2026, ghi vào ngày 01',lb:'Không tính vào số của tuần',n:[6,2,15],bu:'—',m:0,whole:false,notes:['2 dòng (1.03M) trong tháng của tuần này không có ngày nên không vào báo cáo tuần — xem Data Validation.'],proj:'Sep 2026'},
+ days:{sub:'Dữ liệu đến 26/10/2026 · 01/10–26/10/2026 · đang chạy, số tính đến hôm nay',g:'days',psel:'01/10/2026 → 31/10/2026 ▾',c1:'vs Previous',hint:'01/10–26/10/2026 vs 01/09–26/09/2026',costT:'Actual Cost · 01/10–26/10/2026',cost:'193.48',full:'193,478,024',d:'<span class="bd up">▲ 0.4%</span>vs 01/09–26/09/2026 (192.63M)',avg:'7.44',la:'Chi phí nghiệm thu theo tháng, ghi vào ngày 01',lb:'Đã tính trong Actual Cost',n:[6,4,45],bu:'13.4% used',m:13.4,ba:'197.40M',bb:'1.47B',br:'1.28B',whole:true,notes:['2 dòng (1.03M) trong các tháng của khoảng ngày không có ngày (hoặc ngày lệch Year/Month) nên không tính theo khoảng ngày — xem Data Validation.','Khoảng ngày đang chạy — số tính đến hôm nay.'],proj:'Sep 2026'}};
+function perfMode(k){const s=PERF[k];$('pf-sub').textContent=s.sub;['month','week','days'].forEach(g=>$('pf-g-'+g).classList.toggle('on',g===s.g));$('pf-psel').textContent=s.psel;$('pf-c-prev').textContent=s.c1;$('pf-hint').textContent=s.hint;
+ $('pf-cost-t').textContent=s.costT;$('pf-cost-v').innerHTML=s.cost+'<small>M</small>';$('pf-cost-f').textContent=s.full;$('pf-cost-d').innerHTML=s.d;$('pf-avg-v').innerHTML=s.avg+'<small>M</small>';$('pf-lump-a').textContent=s.la;$('pf-lump-b').textContent=s.lb;
+ $('pf-n1').textContent=s.n[0];$('pf-n2').textContent=s.n[1];$('pf-n3').textContent=s.n[2];$('pf-bu').textContent=s.bu;$('pf-meter').style.width=s.m+'%';$('pf-brows').style.display=s.whole?'':'none';$('pf-bnote').style.display=s.whole?'none':'';
+ if(s.whole){$('pf-ba').textContent=s.ba;$('pf-bb').textContent=s.bb;$('pf-br').textContent=s.br}
+ $('pf-notes').innerHTML=s.notes.map(n=>'<div class="note">'+n+'</div>').join('');$('pf-proj').style.display=k==='month'?'':'none';$('pf-blocks').style.gridColumn=k==='month'?'':'1 / -1'}
+function perfFiltersReset(){$('pf-brand-b').textContent='All Brand ▾';$('pf-md5-b').textContent='All MD5 ▾';$('opt-brand-a').classList.remove('on');$('dd-md5-p').textContent='';$('dd-md5-m').textContent='';$('dd-md5-s').textContent='Tìm hoặc dán nhiều MD5…';$('dd-md5-s').classList.remove('typing');$('pf-c-prev').classList.add('on');$('pf-c-ly').classList.remove('on')}
+function campReset(){$('cp-detail').style.display='none';$('cp-r1').classList.remove('sel');$('cp-bars').innerHTML=''}
+function campBars(){const C=['#60a5fa','#32d583','#fdb022','#a78bfa','#22d3ee'];const days=31,on=[0,2,8,10,16,18,24,26,28,30];let h='';
+ for(let d=0;d<days;d++){if(on.indexOf(d)<0){h+='<div class="b none" style="height:0"></div>';continue}h+='<div class="b" style="height:100%">'+C.map(c=>'<i style="height:20%;background:'+c+'"></i>').join('')+'</div>'}
+ $('cp-bars').innerHTML=h}
+function md5Reset(){$('md-detail').style.display='none';$('md-0c4a').classList.remove('sel')}
+function osReset(){$('os-detail').style.display='none';$('os-os-01').classList.remove('sel');barsReset('os-detail')}
+function expReset(){['ex-rows','ex-cols','ex-vals'].forEach(i=>$(i).innerHTML='');$('ex-from').textContent='—';$('ex-to').textContent='—';$('ex-result').style.display='none'}
+const pill=(txt)=>'<span class="sel" style="background:rgba(37,99,235,.22);border-color:rgba(96,165,250,.4)">'+txt+' ×</span>';
+
+// ---------- các cảnh ----------
+const SCENES=[
+ {name:'Tổng quan',run:async t=>{off();show('p-intro');cur.classList.add('hide');['ov-total','ov-plan','ov-cfg','ov-arr','ov-g1','ov-g2','ov-g3','ov-g4','ov-foot'].forEach(i=>$(i).classList.remove('on'));await addr(t,'');
+  cap('Tổng quan','SOC Dashboard là trang báo cáo chi phí và hiệu quả Social của team. Mở bằng link team (một link duy nhất, luôn giữ nguyên qua các lần cập nhật).');await w(3200,t);
+  cap('Tổng quan','Mọi con số lấy từ file SOC DATA 2026. Nguồn chính là tab 2. TOTAL: mỗi dòng là chi phí và chỉ số của một MD5 / OS / brand / objective / campaign trong một ngày.');$('ov-total').classList.add('on');await w(3600,t);
+  cap('Tổng quan','Các sheet Dự chi Tx/yy cho kế hoạch chi theo tháng (dùng cho Budget Used). Hai tab CFG_BRAND và CFG_OBJECTIVE map brand, Project và bộ KPI của từng objective.');$('ov-plan').classList.add('on');$('ov-cfg').classList.add('on');await w(3800,t);
+  cap('Tổng quan','Khi sheet thay đổi, dashboard tự dựng lại số. Lần mở đầu sau khi sheet đổi có thể mất vài giây đến 1 phút; các lần sau mở ngay.');$('ov-arr').classList.add('on');await w(3200,t);
+  cap('Tổng quan','Mười trang chia bốn nhóm: Bắt đầu (Dashboard Hub), Tổng quan (Overview, Performance), Phân tích (By Brand, By Project, By Campaign, By MD5, By OS) và Dữ liệu (Data Explorer, Data Validation).');['ov-g1','ov-g2','ov-g3','ov-g4'].forEach(i=>$(i).classList.add('on'));await w(4200,t);
+  cap('Tổng quan','Cách đọc chung: tên chỉ số bằng tiếng Anh như D4, giải thích bằng tiếng Việt; M = triệu, B = tỷ; ▲▼ là thay đổi so với kỳ so sánh; "—" là chưa có số. Các cảnh sau dùng số minh hoạ cho tháng 9/2026.');$('ov-foot').classList.add('on');await w(4400,t);}},
+
+ {name:'Dashboard Hub',run:async t=>{off();show('p-hub');navOn('hub');scrollReset();$('hub-drawer').classList.remove('on');await addr(t,'?page=hub');
+  cap('Dashboard Hub','Mở link team là vào Dashboard Hub — trang bắt đầu. Menu bên trái có đủ 10 trang; bấm tên trang để chuyển, các trang đã mở được giữ lại nên quay lại rất nhanh.');await move(t,'nav-hub');await w(2400,t);
+  cap('Dashboard Hub','Góc trên: chip vàng đếm số vấn đề dữ liệu cần xử lý (bấm để sang Data Validation), chip xanh cho biết dữ liệu đã có tới ngày nào.');await move(t,'hub-issues');bub('hub-issues','<b>10 vấn đề cần xử lý</b> — mã campaign sai năm, ngày đảo, brand chưa map… Sửa trên sheet là hết.','b');await w(3600,t);bub(null);
+  cap('Dashboard Hub','Khối "Bạn cần trả lời câu hỏi nào?" gợi ý trang theo câu hỏi. Ví dụ muốn biết tháng này đã chi bao nhiêu → Overview hoặc Performance.');await move(t,'hub-q1');hlOn('hub-q1');await w(3200,t);hlOff('hub-q1');
+  cap('Dashboard Hub','Khối Định nghĩa KPI: bấm một dòng để mở từ điển. Ví dụ NROAS30.');await scrollTo(t,'in-hub',250);await click(t,'hub-def-nroas');$('hub-drawer').classList.add('on');await w(900,t);
+  cap('Dashboard Hub','NROAS30 = NDEP30 ÷ Actual Cost: deposit 30 ngày của user mới trên chi phí. Mọi tỉ lệ (CPV, CP NRU, NROAS30…) đều tính lại từ tổng của cả kỳ, không lấy trung bình các tháng.');await w(4600,t);$('hub-drawer').classList.remove('on');await scrollTo(t,'in-hub',0);
+  cap('Dashboard Hub','Case đầu tiên: "Tháng 9 đã chi bao nhiêu?". Bấm Performance trong thẻ câu hỏi.');caseOn('Tháng 9/2026 đã chi bao nhiêu?');await click(t,'hub-q1-perf');await w(500,t);}},
+
+ {name:'Thanh lọc',run:async t=>{off();show('p-perf');navOn('perf');scrollReset();perfMode('month');perfFiltersReset();bars('pf-proj');await addr(t,'?page=performance&grain=month&year=2026&index=9');
+  cap('Thanh lọc','Mọi trang dùng chung một thanh lọc. Đọc từ trái sang: Metric (chỉ số), Period (kỳ), Compare (so với kỳ nào), rồi Brand · Project · Objective · OS · MD5.');hlOn('pf-filters');await w(3600,t);hlOff('pf-filters');
+  cap('Thanh lọc','Period: chọn loại kỳ và kỳ cụ thể. Mặc định là tháng gần nhất đã kết thúc — hôm nay 26/10 nên là September 2026. Performance có thêm Week và Date range.');await move(t,'pf-psel');hlOn('pf-period');await w(3600,t);hlOff('pf-period');
+  cap('Thanh lọc','Compare: MoM so với kỳ liền trước (tháng 8), YoY so với cùng kỳ năm trước (tháng 9/2025). Dòng chữ bên phải nhắc đang so kỳ nào.');await move(t,'pf-cmp');bub('pf-hint','<b>Sep 2026 vs Aug 2026</b> — kỳ đang xem và kỳ đem so.','b');await w(3400,t);bub(null);
+  cap('Thanh lọc','Brand / Project / Objective / OS / MD5 chọn được nhiều giá trị. Thử lọc brand brand-a.');await click(t,'pf-brand-b');ddAt('dd-brand','pf-brand-b');await w(500,t);await click(t,'opt-brand-a');$('opt-brand-a').classList.add('on');$('pf-brand-b').textContent='brand-a ▾';await w(700,t);$('dd-brand').classList.remove('on');
+  await addr(t,'?page=performance&grain=month&year=2026&index=9&brand=brand-a');
+  cap('Thanh lọc','Cả trang chỉ còn số của brand-a. Bộ lọc được ghi lên link: copy link gửi đồng nghiệp là họ mở đúng kỳ và đúng bộ lọc này.');await hl(t,'addr',3400);
+  cap('Thanh lọc','Ô MD5 nhận cả danh sách dán vào (mỗi dòng hoặc cách nhau bởi dấu phẩy), không phân biệt hoa thường, tối đa 50 giá trị.');await click(t,'pf-md5-b');ddAt('dd-md5','pf-md5-b');$('dd-md5-s').textContent='';$('dd-md5-s').classList.add('typing');
+  const L=['0c4a67a1…','bf6b2250…','e04e8d26…'];for(const x of L){$('dd-md5-p').textContent+=x+'\n';await w(380,t)}$('dd-md5-m').textContent='Đã chọn 3 MD5';$('pf-md5-b').textContent='3 selected ▾';await w(2600,t);$('dd-md5').classList.remove('on');
+  cap('Thanh lọc','Muốn bỏ lọc: mở lại ô đó và bỏ chọn, hoặc bấm tên trang ở menu để về mặc định. Ở các cảnh sau mình để lọc trống (All).');perfFiltersReset();await addr(t,'?page=performance&grain=month&year=2026&index=9');await w(2600,t);}},
+
+ {name:'Overview',run:async t=>{off();show('p-ovw');navOn('ovw');scrollReset();$('ov-meter').style.width='0';await addr(t,'?page=overview');caseOn('Báo cáo nhanh tháng 9/2026 cho quản lý');
+  cap('Overview','Overview là trang tóm tắt cho quản lý: tổng chi của kỳ, so kỳ trước, Dự chi và các KPI chính trên một màn.');await move(t,'ov-sum');await w(2600,t);
+  cap('Overview','Tháng 9/2026 chi 227.44M (số đủ 227,435,935), giảm 77.3% so với tháng 8 (1.00B).');hlOn('ov-sum');await w(3200,t);hlOff('ov-sum');
+  cap('Overview','So với Dự chi: mới dùng 17.8% của 1.28B nên trạng thái Under budget. Nếu vượt, nhãn chuyển thành Over budget màu đỏ.');await move(t,'ov-bud');$('ov-meter').style.width='17.8%';hlOn('ov-bud');await w(3600,t);hlOff('ov-bud');
+  cap('Overview','KPI Scorecard chia ba nhóm theo loại objective: Social (View, CPV, Follower…), GA · Site Traffic (New User, Register…) và Ingame (NRU, NPU30, NDEP30, ROAS30).');await move(t,'ov-kpi');await w(3200,t);
+  cap('Overview','Dòng nhỏ dưới tên nhóm cho biết tỉ lệ tính trên những objective nào: Ingame tính trên 5 objective, chiếm 80% chi phí tháng 9.');await move(t,'ov-k-ig');bub('ov-k-ig','<b>Tỉ lệ: 5 objective · 80% cost</b> — CP NRU, ROAS30 chỉ tính trên các objective có theo dõi NRU / deposit.','l');await w(4200,t);bub(null);
+  cap('Overview','Đọc ví dụ: ROAS30 = 3.32, tăng 131.7% so với tháng 8; NRU 3,523, giảm 64.2%. Chi ít hơn nhiều nhưng hiệu quả deposit trên mỗi đồng chi tăng.');hlOn('ov-roas');await w(4200,t);hlOff('ov-roas');
+  cap('Overview','Top Brand Performance xếp brand theo tab đang chọn (Cost · View · NRU · ROAS30). Tháng 9 brand-a đứng đầu với 80.38M, chiếm 35.3% tổng chi.');await scrollTo(t,'in-ovw',230);await move(t,'ov-top');await w(3800,t);await scrollTo(t,'in-ovw',0);}},
+
+ {name:'Performance · Month',run:async t=>{off();show('p-perf');navOn('perf');scrollReset();perfMode('month');perfFiltersReset();barsReset('pf-proj');$('pf-meter').style.width='0';await addr(t,'?page=performance&grain=month&year=2026&index=9');caseOn('Tháng 9/2026: chi bao nhiêu, cho Project nào, còn bao nhiêu Dự chi?');
+  cap('Performance · Month','Performance gộp báo cáo tháng và tuần cũ, thêm khoảng ngày. Loại kỳ Month xem theo cột Year / Month của sheet.');await move(t,'pf-g-month');await w(2600,t);
+  cap('Performance · Month','Actual Cost tháng 9: 227.44M, giảm 77.3% so với tháng 8. Rê chuột lên ▼ để thấy số của cả hai kỳ.');await move(t,'pf-cost');hlOn('pf-cost');await w(3400,t);hlOff('pf-cost');
+  cap('Performance · Month','Avg / Day 7.58M là chi trung bình mỗi ngày, không gồm Monthly Settlement — chi phí nghiệm thu theo tháng được ghi một lần vào ngày 01 (tháng 9 không có khoản nào nên là 0).');await move(t,'pf-avg');await w(2000,t);await move(t,'pf-lump');await w(3200,t);
+  cap('Performance · Month','Active: tháng 9 có 6 brand, 4 Project và 32 MD5 có chi phí.');await move(t,'pf-active');await w(2600,t);
+  cap('Performance · Month','Budget Used: đã chi 227.44M trên Dự chi 1.28B, tức 17.8%; còn lại 1.05B. Dự chi lập theo tháng nên chỉ so khi kỳ là trọn tháng.');await move(t,'pf-budget');$('pf-meter').style.width='17.8%';hlOn('pf-budget');await w(4000,t);hlOff('pf-budget');
+  cap('Performance · Month','Chia theo Project: Bookpost telegram 105.21M, Booking KOL 68.80M, Build kênh 47.06M, Site & Production 6.37M — cộng đúng 227.44M.');bars('pf-proj');await move(t,'pf-proj');await w(4200,t);
+  cap('Performance · Month','Bên dưới còn Trend, Project × Brand, Breakdown by Time, Budget by Project và Detail Table. Bấm một Project hoặc brand trong các bảng này để lọc cả trang.');await move(t,'pf-blocks');await w(3600,t);}},
+
+ {name:'Performance · Week',run:async t=>{off();show('p-perf');navOn('perf');scrollReset();perfMode('month');perfFiltersReset();await addr(t,'?page=performance&grain=month&year=2026&index=9');caseOn('Tuần 42 (12/10–18/10) so với tuần trước');
+  cap('Performance · Week','Đổi loại kỳ sang Week để xem theo tuần ISO (thứ Hai → Chủ nhật). Chọn W42 2026.');await click(t,'pf-g-week');perfMode('week');await addr(t,'?page=performance&grain=week&year=2026&index=42');await w(1200,t);
+  cap('Performance · Week','Tuần 42 chi 60.18M, giảm 6.5% so với tuần 41 (64.38M). Compare lúc này là WoW — so với tuần liền trước.');await move(t,'pf-cost');hlOn('pf-cost');await w(3800,t);hlOff('pf-cost');
+  cap('Performance · Week','Chi phí nghiệm thu theo tháng (ghi ngày 01) không tính vào số của tuần, để tuần chứa ngày 01 không bị phình lên.');await move(t,'pf-lump');bub('pf-lump','<b>Không tính vào số của tuần</b> — xem theo Month hoặc Date range thì khoản này vẫn có trong Actual Cost.','b');await w(4200,t);bub(null);
+  cap('Performance · Week','Budget Used để trống vì Dự chi lập theo tháng; muốn so Dự chi hãy xem trọn tháng.');await move(t,'pf-budget');await w(3000,t);
+  cap('Performance · Week','Ghi chú vàng: 2 dòng (1.03M) trong tháng không có ngày nên không vào báo cáo tuần. Bấm Data Validation để xem và sửa ngày trên sheet.');await move(t,'pf-notes');hlOn('pf-notes');await w(3800,t);hlOff('pf-notes');}},
+
+ {name:'Performance · Date range',run:async t=>{off();show('p-perf');navOn('perf');scrollReset();perfMode('week');perfFiltersReset();await addr(t,'?page=performance&grain=week&year=2026&index=42');caseOn('Tháng 10 tới hôm nay so với cùng các ngày tháng 9');
+  cap('Performance · Date range','Date range chọn khoảng ngày tự do theo cột Date (tối đa 366 ngày), có sẵn nút nhanh: Last 7 days, Last 30 days, This month… Chọn 01/10 → 31/10/2026.');await click(t,'pf-g-days');perfMode('days');await addr(t,'?page=performance&grain=days&dfrom=2026-10-01&dto=2026-10-31');await w(1400,t);
+  cap('Performance · Date range','Dữ liệu mới tới 26/10 nên khoảng được cắt ở 26/10 và ghi "đang chạy, số tính đến hôm nay".');await move(t,'pf-psel');bub('pf-sub','<b>01/10–26/10/2026 · đang chạy</b>','b');await w(3400,t);bub(null);
+  cap('Performance · Date range','Chi 193.48M, tăng 0.4% so với 01/09–26/09 (192.63M). Khoảng bắt đầu ngày 01 trong một tháng thì đem so với đúng các ngày đó của tháng trước.');await move(t,'pf-cost');hlOn('pf-cost');await w(4400,t);hlOff('pf-cost');
+  cap('Performance · Date range','Khoảng phủ trọn tháng 10 nên vẫn so được Dự chi: đã dùng 13.4% của 1.47B. Chọn khoảng lẻ (ví dụ 05/10 → 20/10) thì Budget Used sẽ để trống.');await move(t,'pf-budget');$('pf-meter').style.width='13.4%';hlOn('pf-budget');await w(4400,t);hlOff('pf-budget');
+  cap('Performance · Date range','Khác Week: Date range tính cả chi phí nghiệm thu theo tháng vào đúng ngày ghi (ngày 01).');await move(t,'pf-lump');await w(3000,t);}},
+
+ {name:'By Brand · By Project',run:async t=>{off();show('p-brand');navOn('brand');scrollReset();await addr(t,'?page=brand&grain=month&year=2026&index=9');caseOn('Tháng 9/2026: brand và Project nào giảm chi mạnh nhất?');
+  cap('By Brand','By Brand so mọi brand trong kỳ: chi bao nhiêu, chiếm bao nhiêu %, so kỳ trước, số MD5. Tháng 9 có 33 brand trong dữ liệu.');await move(t,'br-card');await w(3000,t);
+  cap('By Brand','brand-a dẫn đầu: 80.38M (35.3% tổng chi), giảm 60.22M (▼42.8%) so với tháng 8. Bấm một brand để xem sâu: KPI, theo tháng, Project → objective, Top MD5 / OS.');await move(t,'br-brand-a');hlOn('br-brand-a');await w(4600,t);hlOff('br-brand-a');
+  cap('By Brand','"Stopped / No data": tháng trước có chi, tháng này chưa có — có thể đã ngừng, cũng có thể chưa nghiệm thu nên chưa điền. Không coi là 0.');await move(t,'br-stop');hlOn('br-stop');await w(4000,t);hlOff('br-stop');
+  show('p-proj');navOn('proj');await addr(t,'?page=project&grain=month&year=2026&index=9&group=Build%20k%C3%AAnh');
+  cap('By Project','By Project chia theo Project → objective, mỗi objective có KPI riêng theo loại. Chọn tab Build kênh.');await click(t,'pj-tab-bk');await w(1200,t);
+  cap('By Project','Build kênh tháng 9 chỉ còn 47.06M (tháng 8: 584.80M). aikol vẫn tăng 8.7% với View 2.47M, CPV 15.76.');await move(t,'pj-aikol');hlOn('pj-aikol');await w(4200,t);hlOff('pj-aikol');
+  cap('By Project','Cột "vs 3-month median" so KPI chính với trung vị 3 tháng trước để biết tháng này tốt hay xấu so với nhịp thường: View của aikol thấp hơn 42.8%.');await move(t,'pj-med-h');await w(4000,t);
+  cap('By Project','kenhvetinh tháng 8 chi 316.48M, tháng 9 chưa có số → Stopped / No data. Đây là phần lớn lý do Build kênh giảm 91.8%.');await move(t,'pj-stop');hlOn('pj-stop');await w(4200,t);hlOff('pj-stop');}},
+
+ {name:'By Campaign',run:async t=>{off();show('p-camp');navOn('camp');scrollReset();campReset();await addr(t,'?page=campaign&grain=month&year=2026&index=9');caseOn('Nghiệm thu đợt megalive · Camp T08/2026');
+  cap('By Campaign','By Campaign dùng để nghiệm thu theo đợt. Một campaign = Objective + mã Campaign trên sheet. Kỳ chọn Month hoặc Date range; trang này không có Compare.');await move(t,'cp-n');await w(3400,t);
+  cap('By Campaign','Bảng liệt kê campaign có chi phí trong tháng 9: 6 campaign, 1 Running và 5 Ended. Running = còn chi trong 6 ngày gần nhất của dữ liệu.');await move(t,'cp-table');await w(3600,t);
+  cap('By Campaign','Hai cột cần phân biệt: Actual Cost là cả đợt (từ ngày đầu tới ngày cuối có chi), In Period là phần nằm trong kỳ đang xem.');await move(t,'cp-r1-c');hlOn('cp-r1-c');hlOn('cp-r1-i');await w(3800,t);hlOff('cp-r1-c');hlOff('cp-r1-i');
+  cap('By Campaign','Ví dụ megalive · Camp T08/2026 chạy 18/09 → 18/10 (31 ngày): cả đợt 172.00M, riêng tháng 9 là 68.80M. Vì vậy tổng ô Actual Cost (413.80M) lớn hơn In Period (226.51M).');await move(t,'cp-cost');await w(2200,t);await move(t,'cp-in');await w(3200,t);
+  cap('By Campaign','telegram · Camp T9_2026 có ngày cuối 27/10 (sheet đã ghi sẵn) nên vẫn Running.');await move(t,'cp-r2-st');hlOn('cp-r2-st');await w(3200,t);hlOff('cp-r2-st');
+  cap('By Campaign','Bấm dòng megalive để mở Campaign Detail ngay bên dưới; trang tự cuộn xuống.');await click(t,'cp-r1');$('cp-r1').classList.add('sel');$('cp-detail').style.display='';campBars();await addr(t,'?page=campaign&grain=month&year=2026&index=9&camp=megalive%7CCamp%20T08%2F2026');await scrollTo(t,'in-camp',395);
+  cap('By Campaign','Campaign Detail tính cho cả đợt: 18/09 → 18/10, 31 ngày, 172.00M; NRU 1,824, CP NRU 94,298, NPU30 279, NDEP30 218.53M.');await move(t,'cp-kpi');await w(4200,t);
+  cap('By Campaign','Daily Cost: 10 ngày có chi, mỗi ngày 17.20M chia đều 5 brand. Top OS: os-01 100%; Top Brand: brand-e, brand-d, brand-c, brand-a, brand-b mỗi brand 34.40M (20%).');await move(t,'cp-daily');await w(3000,t);await move(t,'cp-tops');await w(2600,t);
+  cap('By Campaign','Link lúc này có camp=… — gửi cho người nghiệm thu là mở đúng đợt. Đợt dài hơn 62 ngày thì Daily Cost chia theo tuần. Bấm "Bỏ chọn campaign" để đóng.');await hl(t,'addr',2800);await click(t,'cp-clear');campReset();await scrollTo(t,'in-camp',0);}},
+
+ {name:'By MD5',run:async t=>{off();show('p-md5');navOn('md5');scrollReset();md5Reset();await addr(t,'?page=md5&grain=month&year=2026&index=9');caseOn('MD5 0c4a67a1… tháng 9 chi vào đâu?');
+  cap('By MD5','By MD5: mỗi dòng là một MD5 (một kênh). Tháng 9 có 32 MD5 có chi; 18 MD5 mới (tháng đầu có chi nằm trong kỳ); 177 MD5 có chi ở tháng 8 nhưng tháng 9 chưa có.');await move(t,'md-active');await w(2000,t);await move(t,'md-new');await w(1800,t);await move(t,'md-stop');await w(2400,t);
+  cap('By MD5','MD5 Ranking: tìm, sắp xếp, phân trang, Export CSV. Nút Copy chép đủ MD5 để dán vào sheet hoặc vào ô lọc MD5 (bấm Copy không mở chi tiết).');await move(t,'md-copy');await toast(t,'Đã copy MD5 e04e8d26…');
+  cap('By MD5','Bấm vào MD5 0c4a67a1 để mở MD5 Detail ngay dưới bảng.');await click(t,'md-0c4a-c');$('md-0c4a').classList.add('sel');$('md-detail').style.display='';await addr(t,'?page=md5&grain=month&year=2026&index=9&md5d=0c4a67a1…');await scrollTo(t,'in-md5',300);
+  cap('By MD5','MD5 này tháng 9 chi 11.45M, 100% cho objective telegram, brand brand-c, OS os-03; NRU 55, CP NRU 208,151, NPU30 40. Trên trang thật có thêm biểu đồ chỉ số theo 12 tháng.');await move(t,'md-detail');await w(4800,t);
+  cap('By MD5','MD5 Cohort: nhóm MD5 theo tháng đầu có chi và đo bao nhiêu % còn chi sau 1 / 2 / 3 tháng. Ví dụ 98 MD5 bắt đầu tháng 7: 80.6% còn chi ở tháng 8 nhưng chỉ 1.0% ở tháng 9.');await scrollTo(t,'in-md5',470);await move(t,'md-coh-jul');hlOn('md-coh-jul');await w(4800,t);hlOff('md-coh-jul');await scrollTo(t,'in-md5',0);}},
+
+ {name:'By OS',run:async t=>{off();show('p-os');navOn('os');scrollReset();osReset();await addr(t,'?page=os&grain=month&year=2026&index=9');caseOn('OS os-01: tháng 9 chi bao nhiêu, cho MD5 nào?');
+  cap('By OS','By OS gom theo OS (cột OS Name của sheet): tháng 9 có 13 OS, 32 MD5, tổng 227.44M.');await w(3000,t);
+  cap('By OS','OS Scorecard: số MD5, chi phí, % tổng, so tháng 8, CPV, CP NRU. os-01 dẫn đầu: 14 MD5, 68.80M (30.3%), tăng 4.30M.');await move(t,'os-os-01');hlOn('os-os-01');await w(4200,t);hlOff('os-os-01');
+  cap('By OS','Bấm os-01 để mở OS Detail.');await click(t,'os-os-01');$('os-os-01').classList.add('sel');$('os-detail').style.display='';await addr(t,'?page=os&grain=month&year=2026&index=9&osd=os-01');await scrollTo(t,'in-os',280);bars('os-detail');
+  cap('By OS','OS Detail: chi theo tháng (tháng 8: 64.50M, tháng 9: 68.80M), Top MD5 của OS: bf6b2250… 13.76M (20%), ba MD5 tiếp theo mỗi MD5 6.88M; kèm brand và objective của OS.');await move(t,'os-detail');await w(5200,t);await scrollTo(t,'in-os',0);}},
+
+ {name:'Data Explorer',run:async t=>{off();show('p-exp');navOn('exp');scrollReset();expReset();await addr(t,'?page=explorer');caseOn('Chi phí từng Project theo tháng, Apr → Sep 2026');
+  cap('Data Explorer','Data Explorer để tự xoay bảng số: chọn chiều đưa vào Rows / Columns, chỉ số vào Values, thêm Filters. Có ba chế độ: Monthly, Daily, Budget.');await move(t,'ex-fields');await w(3400,t);
+  cap('Data Explorer','Cách nhanh nhất là bấm một Preset. Chọn "Cost by Project × Month".');await click(t,'ex-pre');$('ex-rows').innerHTML=pill('Project');await w(300,t);$('ex-cols').innerHTML=pill('Month');await w(300,t);$('ex-vals').innerHTML=pill('Actual Cost');$('ex-from').textContent='Apr 2026 ▾';$('ex-to').textContent='Sep 2026 ▾';await w(1200,t);
+  cap('Data Explorer','Preset điền sẵn: Rows = Project, Columns = Month, Values = Actual Cost, từ Apr đến Sep 2026. Bấm Chạy.');await move(t,'ex-query');await w(2200,t);await click(t,'ex-run');$('ex-result').style.display='';await w(800,t);
+  cap('Data Explorer','Kết quả hiện số đủ (không rút gọn). Cột Sep 2026 cộng lại 227,435,935 — khớp Actual Cost tháng 9 ở Performance và Overview.');await move(t,'ex-total');hlOn('ex-total');await w(4200,t);hlOff('ex-total');
+  cap('Data Explorer','Bấm "Lưu view" để giữ truy vấn này cho lần sau (hiện trong Saved views); Export CSV để mở bằng Excel / Google Sheets.');await move(t,'ex-save');await w(3400,t);}},
+
+ {name:'Data Validation',run:async t=>{off();show('p-dq');navOn('dq');scrollReset();await addr(t,'?page=dq');caseOn('Mã campaign bị kéo fill nhầm năm');
+  cap('Data Validation','Data Validation cho biết dữ liệu nguồn đang lỗi gì: 0 Critical, 10 To fix, 7 Info; dashboard đang dùng 51,561 dòng của 2. TOTAL và 66 dòng Dự chi.');await move(t,'dq-sum');await w(3800,t);
+  cap('Data Validation','Bảng Detected issues sắp theo mức độ rồi theo chi phí bị ảnh hưởng; cột How to fix nói cách sửa trên sheet.');await move(t,'dq-issues');await w(3400,t);
+  cap('Data Validation','Ví dụ: 5,950 dòng (1.58B) có năm trong mã campaign khác năm của dòng — thường do kéo fill làm năm tăng dần (Camp_T7.2027, 2028…).');await move(t,'dq-camp');hlOn('dq-camp');await w(4400,t);hlOff('dq-camp');
+  cap('Data Validation','Khối Campaign Codes liệt kê đúng objective và mã cần sửa. Đợt vắt qua năm (ví dụ T12 chạy sang tháng 1) không bị báo.');await scrollTo(t,'in-dq',210);await move(t,'dq-codes');await w(4200,t);
+  cap('Data Validation','Ví dụ khác: 1,747 dòng (238.56M) có brand chưa có trong CFG_BRAND — thêm slug vào tab CFG_BRAND, không cần sửa code.');await scrollTo(t,'in-dq',0);await move(t,'dq-brand');hlOn('dq-brand');await w(4000,t);hlOff('dq-brand');
+  cap('Data Validation','Sửa xong trên sheet SOC DATA 2026 thì bấm Refresh: dashboard đọc lại dữ liệu và các dòng lỗi biến mất (lần đầu có thể mất tới khoảng 1 phút).');await click(t,'dq-refresh');await toast(t,'Đang tải số mới…');}},
+
+ {name:'Export · chia sẻ link',run:async t=>{off();show('p-perf');navOn('perf');scrollReset();perfMode('month');perfFiltersReset();bars('pf-proj');$('pf-meter').style.width='17.8%';await addr(t,'?page=performance&grain=month&year=2026&index=9');caseOn('Gửi báo cáo tháng 9 cho quản lý dạng PDF');
+  cap('Export','Nút Export có ở góc trên mọi trang: in hoặc lưu PDF đúng trang đang xem, đúng kỳ và bộ lọc.');await click(t,'pf-export');$('print').classList.add('on');await w(900,t);
+  cap('Export','Trang được in ở theme sáng cho dễ đọc trên giấy; menu, thanh lọc và các nút được ẩn, bảng in đủ dòng. Chọn Đích = "Lưu dưới dạng PDF" rồi Lưu.');await move(t,'pr-dest');await w(3000,t);await click(t,'pr-save');$('print').classList.remove('on');await toast(t,'Đã lưu Performance-Sep-2026.pdf');
+  cap('Export','Cần số thô thì dùng nút Export CSV ở từng bảng (mở bằng Excel / Google Sheets).');await w(2800,t);
+  cap('Chia sẻ link','Link luôn mang theo trang, kỳ và bộ lọc đang xem. Copy thanh địa chỉ gửi cho đồng nghiệp là họ mở đúng màn hình bạn đang thấy.');await hl(t,'addr',3400);
+  cap('Chia sẻ link','Link cũ vẫn chạy: link "By MD5 & OS" (?page=channel) mở By MD5; link báo cáo tuần cũ (?page=weekly) mở Performance ở loại kỳ Week.');await addr(t,'?page=channel&grain=month&year=2026&index=9');await w(600,t);show('p-md5');navOn('md5');md5Reset();await addr(t,'?page=md5&grain=month&year=2026&index=9');await toast(t,'Link cũ → By MD5');await w(800,t);}},
+
+ {name:'Quy trình gợi ý',run:async t=>{off();show('p-outro');cur.classList.add('hide');['wf1','wf2','wf3','wf4'].forEach(i=>$(i).classList.remove('on'));await addr(t,'?page=hub');
+  cap('Quy trình gợi ý','Đầu tuần: xem Hub có vấn đề dữ liệu nào không, rồi Performance → Week để so tuần vừa xong với tuần trước.');$('wf1').classList.add('on');await w(4000,t);
+  cap('Quy trình gợi ý','Cuối tháng: Overview cho bức tranh chung, Performance → Month cho Budget Used và bảng chi tiết, Export PDF gửi quản lý.');$('wf2').classList.add('on');await w(4000,t);
+  cap('Quy trình gợi ý','Nghiệm thu campaign: By Campaign → bấm dòng → Campaign Detail; gửi link có camp=… hoặc PDF.');$('wf3').classList.add('on');await w(4000,t);
+  cap('Quy trình gợi ý','Số lạ hoặc thiếu: Data Validation → sửa trên sheet SOC DATA 2026 → Refresh. Hết hướng dẫn — bấm một chương ở trên để xem lại phần cần.');$('wf4').classList.add('on');await w(4600,t);}}
+];
+
+// ---------- trình phát ----------
+const CAPS=SCENES.map(sc=>{const src=sc.run.toString();const re=/cap\('((?:[^'\\]|\\.)*)','((?:[^'\\]|\\.)*)'/g;const out=[];let m;while((m=re.exec(src)))out.push(m[2]);return out});
+function steps(i){const c=$('steps');c.innerHTML='';const caps=CAPS[i]||[];if(caps.length<2){c.style.display='none';return}c.style.display='';const l=document.createElement('span');l.className='lbl';l.textContent='Bước trong cảnh';c.appendChild(l);
+  caps.forEach((txt,k)=>{const b=document.createElement('button');b.type='button';b.textContent=k+1;b.title=txt.length>110?txt.slice(0,110)+'…':txt;b.addEventListener('click',()=>seek(i,k+1));c.appendChild(b)})}
+function markStep(n){[...$('steps').querySelectorAll('button')].forEach((b,k)=>{b.className=k+1<n?'done':k+1===n?'on':''})}
+function seek(i,k){seekCap=k;start(i)}
+function chapters(){const c=$('chapters');c.innerHTML='';SCENES.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.textContent=(i+1)+'. '+s.name;b.className=i===sceneIdx?'on':'';b.addEventListener('click',()=>start(i));c.appendChild(b)})}
+
+// ---------- nhạc nền (Web Audio, tự tổng hợp — không cần file) ----------
+const BGM=(()=>{let ctx=null,master=null,on=true,vol=0.4,timer=null,next=0,step=0,started=false;
+  const BPM=92,STEP=60/BPM/2;const CH=[[57,60,64,69],[53,57,60,65],[48,52,55,60],[55,59,62,67]];const BASS=[45,41,36,43];
+  const f=m=>440*Math.pow(2,(m-69)/12);
+  function init(){ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=0;const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;master.connect(lp);lp.connect(ctx.destination)}
+  function env(g,t,a,d,peak){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+d)}
+  function tone(t,m,len,type,peak){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f(m);env(g,t,0.02,len,peak);o.connect(g);g.connect(master);o.start(t);o.stop(t+len+0.1)}
+  function schedule(){while(next<ctx.currentTime+0.3){const bar=Math.floor(step/8)%4,s=step%8,t=next;
+      if(s===0){CH[bar].forEach(m=>tone(t,m,STEP*8,'sine',0.05));tone(t,BASS[bar],STEP*4,'triangle',0.16)}
+      if(s===4)tone(t,BASS[bar]+7,STEP*3,'triangle',0.1);
+      tone(t,CH[bar][(s*3)%4]+12,STEP*1.6,'triangle',s%2?0.035:0.06);
+      next+=STEP;step++}}
+  function start(){if(!on)return;if(!ctx)init();if(ctx.state==='suspended')ctx.resume();if(timer)return;next=ctx.currentTime+0.05;step=0;master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setValueAtTime(0.0001,ctx.currentTime);master.gain.exponentialRampToValueAtTime(Math.max(vol,0.001),ctx.currentTime+1.5);timer=setInterval(schedule,100);started=true}
+  function pause(){if(ctx)ctx.suspend()}function resume(){if(on&&started&&ctx)ctx.resume()}
+  function stop(fade=1.5){started=false;if(!ctx||!timer)return;const t0=ctx.currentTime;master.gain.cancelScheduledValues(t0);master.gain.setValueAtTime(master.gain.value||0.0001,t0);master.gain.exponentialRampToValueAtTime(0.0001,t0+fade);const tm=timer;timer=null;setTimeout(()=>clearInterval(tm),fade*1000+100)}
+  function setVol(v){vol=v;if(master&&timer)master.gain.setTargetAtTime(Math.max(v,0.0001),ctx.currentTime,0.05)}
+  function toggle(){on=!on;if(!on)stop(0.4);else if(running&&!paused)start();return on}
+  return{start,pause,resume,stop,setVol,toggle}})();
+$('music').addEventListener('click',()=>{const o=BGM.toggle();$('music').textContent=o?'♪ Nhạc: bật':'♪ Nhạc: tắt';$('music').classList.toggle('off',!o)});
+$('musicvol').addEventListener('input',e=>BGM.setVol(parseFloat(e.target.value)));
+
+async function start(from){token++;const t=token;sceneIdx=from;running=true;paused=false;$('play').textContent='⏸ Dừng';BGM.start();boost=seekCap>1?100:1;if(seekCap<=1)seekCap=0;
+  try{for(let i=from;i<SCENES.length;i++){sceneIdx=i;chapters();steps(i);capCount=0;$('bar').style.width=(i/SCENES.length*100)+'%';await SCENES[i].run(t);if(t!==token)return;boost=1;seekCap=0}
+    $('bar').style.width='100%';cap('Kết thúc','Hết hướng dẫn. Bấm ↺ Từ đầu để xem lại, hoặc chọn một chương ở trên.');running=false;$('play').textContent='▶ Chạy';BGM.stop(2.5)}
+  catch(e){if(e!=='stop')console.error(e)}}
+$('play').addEventListener('click',()=>{if(!running){start(sceneIdx)}else{paused=!paused;$('play').textContent=paused?'▶ Tiếp tục':'⏸ Dừng';if(paused)BGM.pause();else BGM.resume()}});
+$('restart').addEventListener('click',()=>start(0));
+$('speed').addEventListener('change',e=>{speed=parseFloat(e.target.value)});
+document.addEventListener('keydown',e=>{if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();$('play').click()}else if(e.key==='ArrowRight'){start(Math.min(SCENES.length-1,sceneIdx+1))}else if(e.key==='ArrowLeft'){start(Math.max(0,sceneIdx-1))}});
+chapters();steps(0);show('p-intro');['ov-total','ov-plan','ov-cfg','ov-arr','ov-g1','ov-g2','ov-g3','ov-g4','ov-foot'].forEach(i=>$(i).classList.add('on'));
+})();
+</script>
+</body>
+</html>
