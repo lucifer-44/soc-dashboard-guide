@@ -231,7 +231,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric
 <body>
 <div class="wrap">
   <header>
-    <div class="brand"><span class="mark">SOC</span><div><h1>SOC Dashboard · Hướng dẫn sử dụng</h1><p class="sub">Phiên bản 10/2026 · Số liệu minh hoạ</p></div></div>
+    <div class="brand"><span class="mark">SOC</span><div><h1>SOC Dashboard · Hướng dẫn sử dụng</h1><p class="sub">Phiên bản 11/2026 · Số liệu minh hoạ</p></div></div>
     <div class="ctl">
       <button id="play" class="primary" type="button" title="Phím tắt: Space phát / tạm dừng, ← → chuyển phần">▶ Chạy</button>
       <button id="restart" type="button">↺ Từ đầu</button>
@@ -354,7 +354,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric
             <div class="kgrid">
               <div class="card kpi" id="ov-k-social"><h3>Social</h3><span class="scope">Tỉ lệ: 2 objective · 17% cost</span><div class="st">
                 <div><small>View</small><b>2.65M</b><span class="bd dn">▼ 99.3%</span></div><div><small>CPV</small><b>15.76</b><span class="bd dn">▲ 1,064.6%</span></div>
-                <div><small>Follower (end)</small><b>297</b><span class="bd dn">▼ 100.0%</span></div><div><small>Δ Follower (vs previous)</small><b>-2,564</b><em>+296 từ MD5 mới</em></div>
+                <div><small>Reach</small><b>1.84M</b><span class="bd dn">▼ 97.6%</span></div><div><small>CP Reach</small><b>22.70</b><span class="bd dn">▲ 412.3%</span></div>
                 <div><small>Engagement</small><b>56,517</b><span class="bd dn">▼ 98.8%</span></div><div><small>Engagement / View</small><b>2.4%</b><span class="bd up">▲ 0.5 pp</span></div></div></div>
               <div class="card kpi" id="ov-k-ga"><h3>GA · Site Traffic</h3><span class="scope">Tỉ lệ: 5 objective · 80% cost</span><div class="st">
                 <div><small>New User</small><b>10,142</b><span class="bd dn">▼ 18.3%</span></div><div><small>Session</small><b>12,961</b><span class="bd dn">▼ 10.5%</span></div>
@@ -688,7 +688,7 @@ const SCENES=[
   cap('Overview','Overview tóm tắt kỳ báo cáo cho quản lý: tổng chi, so với kỳ trước, Dự chi và các KPI chính trên một màn hình.');await move(t,'ov-sum');await w(2600,t);
   cap('Overview','Ví dụ: tháng 9/2026 chi 227.44M (227,435,935), giảm 77.3% so với tháng 8 (1.00B).');hlOn('ov-sum');await w(3200,t);hlOff('ov-sum');
   cap('Overview','Budget vs Actual: đã dùng 17.8% Dự chi 1.28B nên trạng thái là Under budget. Khi chi vượt Dự chi, nhãn chuyển thành Over budget (màu đỏ).');await move(t,'ov-bud');$('ov-meter').style.width='17.8%';hlOn('ov-bud');await w(3600,t);hlOff('ov-bud');
-  cap('Overview','KPI Scorecard chia ba nhóm theo loại objective: Social (View, CPV, Follower…), GA · Site Traffic (New User, Register…) và Ingame (NRU, NPU30, NDEP30, ROAS30).');await move(t,'ov-kpi');await w(3200,t);
+  cap('Overview','KPI Scorecard chia ba nhóm theo loại objective: Social (View, CPV, Reach…), GA · Site Traffic (New User, Register…) và Ingame (NRU, NPU30, NDEP30, ROAS30).');await move(t,'ov-kpi');await w(3200,t);
   cap('Overview','Dòng chú thích dưới tên nhóm cho biết phạm vi tính tỉ lệ. Ví dụ: Ingame tính trên 5 objective, chiếm 80% chi phí tháng 9.');await move(t,'ov-k-ig');bub('ov-k-ig','<b>Tỉ lệ: 5 objective · 80% cost</b> — CP NRU, ROAS30 chỉ tính trên các objective có theo dõi NRU / deposit.','l');await w(4200,t);bub(null);
   cap('Overview','Ví dụ: ROAS30 = 3.32, tăng 131.7% so với tháng 8; NRU 3,523, giảm 64.2%. Chi phí giảm mạnh nhưng deposit trên mỗi đồng chi tăng.');hlOn('ov-roas');await w(4200,t);hlOff('ov-roas');
   cap('Overview','Top Brand Performance xếp hạng brand theo tab đang chọn (Cost, View, NRU, ROAS30). Tháng 9, brand-a đứng đầu với 80.38M (35.3% tổng chi).');await scrollTo(t,'in-ovw',230);await move(t,'ov-top');await w(3800,t);await scrollTo(t,'in-ovw',0);}},
@@ -770,7 +770,7 @@ const SCENES=[
   cap('Export','Bản in dùng theme sáng; menu, thanh lọc và các nút được ẩn, bảng in đủ dòng. Để lưu PDF, chọn Đích = "Lưu dưới dạng PDF" rồi bấm Lưu.');await move(t,'pr-dest');await w(3000,t);await click(t,'pr-save');$('print').classList.remove('on');await toast(t,'Đã lưu Performance-Sep-2026.pdf');
   cap('Export','Để lấy số liệu thô, dùng nút Export CSV của từng bảng.');await w(2800,t);
   cap('Chia sẻ link','Link chứa trang, kỳ và bộ lọc đang xem. Người nhận mở link sẽ thấy đúng màn hình này.');await hl(t,'addr',3400);
-  cap('Chia sẻ link','Link cũ vẫn dùng được: ?page=channel (By MD5 & OS) mở By MD5; ?page=weekly (báo cáo tuần) mở Performance với loại kỳ Week.');await addr(t,'?page=channel&grain=month&year=2026&index=9');await w(600,t);show('p-md5');navOn('md5');md5Reset();await addr(t,'?page=md5&grain=month&year=2026&index=9');await toast(t,'Link cũ → By MD5');await w(800,t);}},
+  cap('Chia sẻ link','Link cũ vẫn dùng được: ?page=channel (trang MD5 và OS gộp cũ) mở By MD5; ?page=weekly (báo cáo tuần) mở Performance với loại kỳ Week.');await addr(t,'?page=channel&grain=month&year=2026&index=9');await w(600,t);show('p-md5');navOn('md5');md5Reset();await addr(t,'?page=md5&grain=month&year=2026&index=9');await toast(t,'Link cũ → By MD5');await w(800,t);}},
 
  {name:'Quy trình gợi ý',run:async t=>{off();show('p-outro');cur.classList.add('hide');['wf1','wf2','wf3','wf4'].forEach(i=>$(i).classList.remove('on'));await addr(t,'?page=hub');
   cap('Quy trình gợi ý','Đầu tuần: kiểm tra vấn đề dữ liệu trên Hub, sau đó dùng Performance → Week để so tuần vừa kết thúc với tuần trước.');$('wf1').classList.add('on');await w(4000,t);
